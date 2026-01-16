@@ -1,343 +1,1798 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Documentos - Procurações e Declaração</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; }
-        .container { background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #333; margin-bottom: 30px; }
-        .input-section { background-color: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid #007bff; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin: 20px 0; }
-        .form-item { display: flex; flex-direction: column; }
-        .form-item label { font-weight: bold; color: #007bff; margin-bottom: 5px; }
-        .form-item input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
-        .form-item input:focus { border-color: #007bff; outline: none; }
-        .form-item input::placeholder { opacity: 0.5; color: #999; }
-        
-        .buttons-section { background-color: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 20px; border-left: 5px solid #6c757d; }
-        .buttons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
-        
-        .btn { color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: all 0.3s; font-weight: bold; }
-        .btn-acordo { background-color: #28a745; }
-        .btn-acordo:hover { background-color: #218838; }
-        .btn-recebimento { background-color: #17a2b8; }
-        .btn-recebimento:hover { background-color: #138496; }
-        .btn-residencia { background-color: #ffc107; color: #212529; }
-        .btn-residencia:hover { background-color: #e0a800; }
-        
-        .status { margin: 20px 0; padding: 15px; border-radius: 5px; display: none; }
-        .status.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .status.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerador de Documentos - Procurações e Termos</title>
+
+  <style>
+    :root{
+      --bg:#f5f5f7;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --primary:#2563eb;
+      --primary-2:#1d4ed8;
+      --shadow: 0 10px 25px rgba(17,24,39,0.08);
+      --radius: 14px;
+
+      /* ===== MODO COMPACTO ===== */
+      --container-pad: 20px;
+      --card-pad: 12px;
+      --head-gap: 8px;
+      --head-pad-bottom: 10px;
+      --section-pad-top: 10px;
+      --section-margin-top: 10px;
+      --form-gap: 10px;
+      --input-pad-y: 9px;
+      --input-pad-x: 10px;
+      --label-size: 12px;
+      --input-size: 13px;
+      --title-size: 14px;
+      --helper-size: 11.5px;
+      --btn-pad-y: 12px;
+      --btn-pad-x: 16px;
+      --btn-font: 14px;
+      --actions-pad-top: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+      background: radial-gradient(1200px 400px at 30% -10%, rgba(37,99,235,0.12), transparent 50%),
+                  radial-gradient(900px 300px at 90% 10%, rgba(14,165,233,0.10), transparent 55%),
+                  var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      background: var(--card);
+      padding: var(--container-pad);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(229,231,235,0.8);
+    }
+
+    h1 {
+      text-align: center;
+      margin: 6px 0 4px;
+      font-size: 22px;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      margin: 0 0 14px;
+      font-size: 13px;
+    }
+
+    /* ===== CAPA ===== */
+    .cover{
+      background: linear-gradient(180deg, rgba(255,255,255,1), rgba(249,250,251,1));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 8px 18px rgba(17,24,39,0.06);
+      margin-bottom: 12px;
+    }
+
+    .cover-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 10px;
+    }
+
+    .cover-btn{
+      width:100%;
+      border: 1px solid rgba(229,231,235,0.95);
+      border-radius: 16px;
+      padding: 12px 12px;
+      background: #fff;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      box-shadow: 0 10px 18px rgba(17,24,39,0.06);
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      text-align:left;
+      overflow: hidden;
+    }
+
+    .cover-btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 14px 22px rgba(17,24,39,0.08);
+      border-color: rgba(37,99,235,0.25);
+    }
+
+    .cover-left{
+      display:flex;
+      flex-direction:column;
+      gap: 6px;
+      min-width:0;
+      text-align:left;
+      align-items:flex-start;
+      flex: 1 1 auto;
+    }
+
+    /* ===== NOME DO DOCUMENTO COM CARA DE BOTÃO (PILL PREMIUM) ===== */
+    .cover-doc-pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 950;
+      font-size: 12px;
+      letter-spacing: .35px;
+      text-transform: uppercase;
+      border: 1px solid;
+      background: #fff;
+      box-shadow: 0 6px 12px rgba(17,24,39,0.06);
+      line-height: 1.05;
+      max-width: 100%;
+      white-space: normal;
+      overflow: hidden;
+      text-overflow: clip;
+    }
+
+    .cover-hint{
+      font-size: 11px;
+      color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      margin-left: 4px;
+    }
+
+    .pill{
+      flex: 0 0 auto;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      border: 1px solid;
+      white-space:nowrap;
+      letter-spacing: .2px;
+      text-transform: uppercase;
+    }
+
+    /* cores dos pills */
+    .pill-acordo{ color:#166534; background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.28); }
+    .pill-receb{ color:#075985; background: rgba(56,189,248,0.14); border-color: rgba(56,189,248,0.30); }
+    .pill-quit{ color:#111827; background: rgba(17,24,39,0.10); border-color: rgba(17,24,39,0.22); }
+    .pill-inst{ color:#4c1d95; background: rgba(139,92,246,0.14); border-color: rgba(139,92,246,0.30); }
+    .pill-res{ color:#92400e; background: rgba(251,191,36,0.14); border-color: rgba(251,191,36,0.30); }
+
+    /* cores do nome-pílula na capa */
+    .cover-doc-acordo{ color:#166534; background: rgba(34,197,94,0.10); border-color: rgba(34,197,94,0.30); }
+    .cover-doc-receb{ color:#075985; background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.32); }
+    .cover-doc-quit{ color:#111827; background: rgba(17,24,39,0.08); border-color: rgba(17,24,39,0.22); }
+    .cover-doc-inst{ color:#4c1d95; background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.32); }
+    .cover-doc-res{ color:#92400e; background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.32); }
+
+    /* ===== DEPÓSITO PARA TERCEIROS ===== */
+    .pill-dep{ color:#0f172a; background: rgba(148,163,184,0.16); border-color: rgba(148,163,184,0.35); }
+
+    /* cores do nome-pílula na capa */
+    .cover-doc-dep{ color:#0f172a; background: rgba(148,163,184,0.14); border-color: rgba(148,163,184,0.36); }
+
+    /* cores do título */
+    .doc-title-dep{ color:#0f172a; background: rgba(148,163,184,0.14); border-color: rgba(148,163,184,0.36); }
+
+    /* botão */
+    .btn-deposito{ background: linear-gradient(135deg, #334155, #64748b); }
+
+    .doc-area{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .doc-card{
+      background: linear-gradient(180deg, rgba(255,255,255,1), rgba(249,250,251,1));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: var(--card-pad);
+      box-shadow: 0 8px 18px rgba(17,24,39,0.06);
+    }
+
+    .doc-card .head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      gap: var(--head-gap);
+      margin-bottom: 8px;
+      padding-bottom: var(--head-pad-bottom);
+      border-bottom: 1px dashed rgba(229,231,235,0.9);
+    }
+
+    /* ===== TÍTULO NO ESTILO "BOTÃO" ===== */
+    .doc-title-pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-weight: 950;
+      font-size: 14px;
+      letter-spacing: .4px;
+      border: 1px solid;
+      text-transform: uppercase;
+      user-select: none;
+      box-shadow: 0 10px 18px rgba(17,24,39,0.08);
+      background: #fff;
+    }
+    .doc-title-acordo{ color:#166534; background: rgba(34,197,94,0.10); border-color: rgba(34,197,94,0.30); }
+    .doc-title-receb{ color:#075985; background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.32); }
+    .doc-title-quit{ color:#111827; background: rgba(17,24,39,0.08); border-color: rgba(17,24,39,0.22); }
+    .doc-title-inst{ color:#4c1d95; background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.32); }
+    .doc-title-res{ color:#92400e; background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.32); }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--form-gap);
+      margin-top: 8px;
+    }
+
+    .form-item{
+      display:flex;
+      flex-direction:column;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .form-item label{
+      font-weight: 800;
+      color: var(--primary-2);
+      font-size: var(--label-size);
+      line-height: 1.1;
+    }
+
+    .form-item input{
+      padding: var(--input-pad-y) var(--input-pad-x);
+      border: 1px solid rgba(209,213,219,0.9);
+      border-radius: 10px;
+      font-size: var(--input-size);
+      outline: none;
+      background: rgba(255,255,255,0.92);
+      transition: border-color .2s, box-shadow .2s;
+      height: 38px;
+    }
+
+    .form-item input::placeholder{ color:#9ca3af; }
+
+    .form-item input:focus{
+      border-color: rgba(37,99,235,0.65);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    }
+
+    .helper{
+      font-size: var(--helper-size);
+      color: var(--muted);
+      margin: 8px 0 0;
+      line-height: 1.25;
+    }
+
+    .section-title{
+      margin-top: var(--section-margin-top);
+      padding-top: var(--section-pad-top);
+      border-top: 1px dashed rgba(229,231,235,0.9);
+      font-weight: 900;
+      color: #111827;
+      font-size: 12px;
+      letter-spacing: .2px;
+    }
+
+    .doc-actions{
+      margin-top: 12px;
+      padding-top: var(--actions-pad-top);
+      border-top: 1px dashed rgba(229,231,235,0.9);
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn{
+      color: white;
+      padding: var(--btn-pad-y) var(--btn-pad-x);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: var(--btn-font);
+      transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
+      font-weight: 900;
+      box-shadow: 0 10px 18px rgba(17,24,39,0.10);
+      flex: 0 0 auto;
+      min-width: 280px;
+      max-width: 560px;
+      width: auto;
+      line-height: 1.1;
+    }
+    .btn:hover{ transform: translateY(-1px); filter: brightness(1.02); box-shadow: 0 14px 22px rgba(17,24,39,0.12); }
+    .btn:active{ transform: translateY(0px); }
+
+    .btn-acordo{ background: linear-gradient(135deg, #16a34a, #22c55e); }
+    .btn-recebimento{ background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
+    .btn-residencia{ background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #111827; }
+    .btn-responsabilidade{ background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+    .btn-quitacao{ background: linear-gradient(135deg, #111827, #374151); }
+
+    .status{
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 12px;
+      display:none;
+      border: 1px solid var(--border);
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .status.success{ background: rgba(22,163,74,0.10); color: #166534; border-color: rgba(22,163,74,0.25); }
+    .status.error{ background: rgba(220,38,38,0.10); color: #7f1d1d; border-color: rgba(220,38,38,0.25); }
+
+    .hidden{ display:none !important; }
+
+    .footer{
+      text-align:center;
+      margin-top: 14px;
+      padding: 8px 4px 0;
+      color: rgba(107,114,128,0.55);
+      font-size: 13px;
+    }
+
+    @media (max-width: 520px){
+      body{ padding: 12px; }
+      h1{ font-size: 20px; }
+      .container{ padding: 16px; }
+      .form-grid{ grid-template-columns: 1fr; }
+      .btn{ flex: 1 1 100%; }
+      .doc-title-pill{ font-size: 14px; padding: 9px 14px; }
+      .cover-doc-pill{ font-size: 12.5px; padding: 9px 12px; }
+    }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
+
 <body>
-<div class="container">
-    <h1>📄 Gerador de Documentos - San Marino 📄</h1>
-    <p style="text-align: center; color: #666; margin-bottom: 28px;">
-        Procurações e Declaração de Residência
-    </p>
-    
-    <div class="input-section">
-        <h3>Dados do Cliente:</h3>
-        <div class="form-grid">
-            <div class="form-item">
-                <label for="nomeCompleto">Nome Completo:</label>
-                <input type="text" id="nomeCompleto" placeholder="Nome completo do cliente">
-            </div>
-            <div class="form-item">
-                <label for="cpfCnpj">CPF/CNPJ:</label>
-                <input type="text" id="cpfCnpj" placeholder="000.000.000-00">
-            </div>
-            <div class="form-item">
-                <label for="endereco">Endereço:</label>
-                <input type="text" id="endereco" placeholder="Rua/av, número, complemento">
-            </div>
-            <div class="form-item">
-                <label for="bairro">Bairro:</label>
-                <input type="text" id="bairro" placeholder="Nome do bairro">
-            </div>
-            <div class="form-item">
-                <label for="cep">CEP:</label>
-                <input type="text" id="cep" placeholder="00000-000">
-            </div>
-            <div class="form-item">
-                <label for="cidade">Cidade:</label>
-                <input type="text" id="cidade" placeholder="Nome da cidade">
-            </div>
-            <div class="form-item">
-                <label for="estado">Estado:</label>
-                <input type="text" id="estado" placeholder="Sigla do Estado">
-            </div>
-        </div>
-        
-        <h3>Dados do Veículo (para procurações):</h3>
-        <div class="form-grid">
-            <div class="form-item">
-                <label for="modelo">Modelo do Veículo:</label>
-                <input type="text" id="modelo" placeholder="Ex: FIAT/ARGO DRIVE">
-            </div>
-            <div class="form-item">
-                <label for="placa">Placa:</label>
-                <input type="text" id="placa" placeholder="ABC1234">
-            </div>
-            <div class="form-item">
-                <label for="anoModelo">Ano/Modelo:</label>
-                <input type="text" id="anoModelo" placeholder="2020/2021">
-            </div>
-            <div class="form-item">
-                <label for="chassi">Chassi:</label>
-                <input type="text" id="chassi" placeholder="17 caracteres">
-            </div>
-            <div class="form-item">
-                <label for="renavam">Renavam:</label>
-                <input type="text" id="renavam" placeholder="Número do Renavam">
-            </div>
-            <div class="form-item">
-                <label for="cor">Cor:</label>
-                <input type="text" id="cor" placeholder="Cor do veículo">
-            </div>
-        </div>
-    </div>
+  <div class="container">
+    <h1>Gerador de Documentos - San Marino</h1>
+    <p class="subtitle">Clique em um dos documentos e preencha os dados.</p>
 
     <div class="status" id="status"></div>
-    
-    <div class="buttons-section">
-        <h3>Gerar Documentos:</h3>
-        <div class="buttons-grid">
-            <button class="btn btn-acordo" onclick="gerarProcuracaoAcordo()">
-                📄 Gerar Procuração de Acordo/GRT
-            </button>
-            <button class="btn btn-recebimento" onclick="gerarProcuracaoRecebimento()">
-                🚙 Gerar Procuração de Recebimento do Usado
-            </button>
-            <button class="btn btn-residencia" onclick="gerarDeclaracaoResidencia()">
-                🏠 Gerar Declaração de Residência
-            </button>
+
+    <!-- =========================
+         CAPA (apenas nomes dos documentos)
+         ========================= -->
+    <div class="cover" id="cover">
+      <div class="cover-grid">
+
+        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-recebimento')">
+          <div class="cover-left">
+            <div class="cover-doc-pill cover-doc-receb">PROCURAÇÃO DE RECEBIMENTO DO USADO</div>
+          </div>
+        </button>
+
+        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-acordo')">
+          <div class="cover-left">
+            <div class="cover-doc-pill cover-doc-acordo">PROCURAÇÃO DE ACORDO</div>
+          </div>
+        </button>
+
+        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-instrumento')">
+          <div class="cover-left">
+            <div class="cover-doc-pill cover-doc-inst">INSTRUMENTO DE RESPONSABILIDADE</div>
+          </div>
+        </button>
+
+        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-quitacao')">
+          <div class="cover-left">
+            <div class="cover-doc-pill cover-doc-quit">TERMO DE QUITAÇÃO (ENTRADA DE TERCEIRO)</div>
+          </div>
+        </button>
+
+        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-residencia')">
+          <div class="cover-left">
+            <div class="cover-doc-pill cover-doc-res">DECLARAÇÃO DE RESIDÊNCIA</div>
+          </div>
+        </button>
+
+        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-deposito')">
+          <div class="cover-left">
+            <div class="cover-doc-pill cover-doc-dep">DECLARAÇÃO DE DEPÓSITO PARA TERCEIROS</div>
+          </div>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- =========================
+         ÁREA DOS DOCUMENTOS (ocultos até clicar)
+         ========================= -->
+    <div class="doc-area" id="docArea">
+
+      <!-- =========================
+           1) PROCURAÇÃO DE ACORDO
+           ========================= -->
+      <div class="doc-card hidden" id="doc-acordo">
+        <div class="head">
+          <div class="doc-title-pill doc-title-acordo">PROCURAÇÃO DE ACORDO</div>
         </div>
+
+        <div class="section-title">Dados do Cliente</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="acordo_nomeCompleto">Nome Completo</label>
+            <input type="text" id="acordo_nomeCompleto" placeholder="Nome completo do cliente">
+          </div>
+          <div class="form-item">
+            <label for="acordo_cpfCnpj">CPF/CNPJ</label>
+            <input type="text" id="acordo_cpfCnpj" placeholder="000.000.000-00">
+          </div>
+          <div class="form-item">
+            <label for="acordo_endereco">Endereço</label>
+            <input type="text" id="acordo_endereco" placeholder="Rua/av, número, complemento">
+          </div>
+          <div class="form-item">
+            <label for="acordo_bairro">Bairro</label>
+            <input type="text" id="acordo_bairro" placeholder="Nome do bairro">
+          </div>
+          <div class="form-item">
+            <label for="acordo_cep">CEP</label>
+            <input type="text" id="acordo_cep" placeholder="00000-000">
+          </div>
+          <div class="form-item">
+            <label for="acordo_cidade">Cidade</label>
+            <input type="text" id="acordo_cidade" placeholder="Nome da cidade">
+          </div>
+          <div class="form-item">
+            <label for="acordo_estado">Estado</label>
+            <input type="text" id="acordo_estado" placeholder="Sigla do Estado">
+          </div>
+        </div>
+
+        <div class="section-title">Dados do Veículo</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="acordo_modelo">Modelo do Veículo</label>
+            <input type="text" id="acordo_modelo" placeholder="Ex: CHEVROLET/ONIX 1.0 TURBO">
+          </div>
+          <div class="form-item">
+            <label for="acordo_placa">Placa</label>
+            <input type="text" id="acordo_placa" placeholder="ABC1D23">
+          </div>
+          <div class="form-item">
+            <label for="acordo_anoModelo">Ano/Modelo</label>
+            <input type="text" id="acordo_anoModelo" placeholder="2020/2021">
+          </div>
+          <div class="form-item">
+            <label for="acordo_chassi">Chassi</label>
+            <input type="text" id="acordo_chassi" placeholder="17 caracteres">
+          </div>
+          <div class="form-item">
+            <label for="acordo_renavam">Renavam</label>
+            <input type="text" id="acordo_renavam" placeholder="Número do Renavam">
+          </div>
+          <div class="form-item">
+            <label for="acordo_cor">Cor</label>
+            <input type="text" id="acordo_cor" placeholder="Cor do veículo">
+          </div>
+        </div>
+
+        <div class="doc-actions">
+          <button class="btn btn-acordo" type="button" onclick="gerarProcuracaoAcordo()">📄 Gerar Procuração de Acordo</button>
+        </div>
+      </div>
+
+      <!-- =========================
+           2) PROCURAÇÃO DE RECEBIMENTO
+           ========================= -->
+      <div class="doc-card hidden" id="doc-recebimento">
+        <div class="head">
+          <div class="doc-title-pill doc-title-receb">PROCURAÇÃO DE RECEBIMENTO DO USADO</div>
+        </div>
+
+        <div class="section-title">Dados do Cliente</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="rec_nomeCompleto">Nome Completo</label>
+            <input type="text" id="rec_nomeCompleto" placeholder="Nome completo do cliente">
+          </div>
+          <div class="form-item">
+            <label for="rec_cpfCnpj">CPF/CNPJ</label>
+            <input type="text" id="rec_cpfCnpj" placeholder="000.000.000-00">
+          </div>
+          <div class="form-item">
+            <label for="rec_endereco">Endereço</label>
+            <input type="text" id="rec_endereco" placeholder="Rua/av, número, complemento">
+          </div>
+          <div class="form-item">
+            <label for="rec_bairro">Bairro</label>
+            <input type="text" id="rec_bairro" placeholder="Nome do bairro">
+          </div>
+          <div class="form-item">
+            <label for="rec_cidade">Cidade</label>
+            <input type="text" id="rec_cidade" placeholder="Nome da cidade">
+          </div>
+          <div class="form-item">
+            <label for="rec_estado">Estado</label>
+            <input type="text" id="rec_estado" placeholder="Sigla do Estado">
+          </div>
+        </div>
+
+        <div class="section-title">Dados do Veículo</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="rec_modelo">Modelo do Veículo</label>
+            <input type="text" id="rec_modelo" placeholder="Ex: CHEVROLET/ONIX 1.0 TURBO">
+          </div>
+          <div class="form-item">
+            <label for="rec_placa">Placa</label>
+            <input type="text" id="rec_placa" placeholder="ABC1D23">
+          </div>
+          <div class="form-item">
+            <label for="rec_anoModelo">Ano/Modelo</label>
+            <input type="text" id="rec_anoModelo" placeholder="2020/2021">
+          </div>
+          <div class="form-item">
+            <label for="rec_chassi">Chassi</label>
+            <input type="text" id="rec_chassi" placeholder="17 caracteres">
+          </div>
+          <div class="form-item">
+            <label for="rec_cor">Cor</label>
+            <input type="text" id="rec_cor" placeholder="Cor do veículo">
+          </div>
+        </div>
+
+        <div class="doc-actions">
+          <button class="btn btn-recebimento" type="button" onclick="gerarProcuracaoRecebimento()">🚙 Gerar Procuração de Recebimento do Usado</button>
+        </div>
+      </div>
+
+      <!-- =========================
+           3) TERMO DE QUITAÇÃO
+           ========================= -->
+      <div class="doc-card hidden" id="doc-quitacao">
+        <div class="head">
+          <div class="doc-title-pill doc-title-quit">TERMO DE QUITAÇÃO (ENTRADA DE TERCEIRO)</div>
+        </div>
+
+        <div class="section-title">Dados do Cliente (Anuente)</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="quit_nomeCompleto">Nome Completo</label>
+            <input type="text" id="quit_nomeCompleto" placeholder="Nome completo do cliente">
+          </div>
+          <div class="form-item">
+            <label for="quit_cpfCnpj">CPF/CNPJ</label>
+            <input type="text" id="quit_cpfCnpj" placeholder="000.000.000-00">
+          </div>
+          <div class="form-item">
+            <label for="quit_cidade">Cidade</label>
+            <input type="text" id="quit_cidade" placeholder="Nome da cidade">
+          </div>
+        </div>
+
+        <div class="section-title">Veículo Entregue (Entrada)</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="quit_modelo">Modelo do Veículo</label>
+            <input type="text" id="quit_modelo" placeholder="Ex: CHEVROLET/ONIX">
+          </div>
+          <div class="form-item">
+            <label for="quit_anoModelo">Ano/Modelo</label>
+            <input type="text" id="quit_anoModelo" placeholder="2020/2021">
+          </div>
+          <div class="form-item">
+            <label for="quit_placa">Placa</label>
+            <input type="text" id="quit_placa" placeholder="ABC1D23">
+          </div>
+          <div class="form-item">
+            <label for="quit_chassi">Chassi</label>
+            <input type="text" id="quit_chassi" placeholder="17 caracteres">
+          </div>
+          <div class="form-item">
+            <label for="quit_cor">Cor</label>
+            <input type="text" id="quit_cor" placeholder="Cor do veículo">
+          </div>
+        </div>
+
+        <div class="section-title">Dados do Cedente (Terceiro)</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="quit_cedenteNome">Nome/Razão Social do Cedente</label>
+            <input type="text" id="quit_cedenteNome" placeholder="Nome completo / Razão social">
+          </div>
+          <div class="form-item">
+            <label for="quit_cedenteCpfCnpj">CPF/CNPJ do Cedente</label>
+            <input type="text" id="quit_cedenteCpfCnpj" placeholder="000.000.000-00">
+          </div>
+          <div class="form-item">
+            <label for="quit_cedenteEndereco">Endereço do Cedente</label>
+            <input type="text" id="quit_cedenteEndereco" placeholder="Rua/av">
+          </div>
+          <div class="form-item">
+            <label for="quit_cedenteNumero">Número</label>
+            <input type="text" id="quit_cedenteNumero" placeholder="nº">
+          </div>
+        </div>
+
+        <div class="section-title">Veículo Adquirido / Contrato</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="quit_veiculoAdquiridoModelo">Modelo do veículo adquirido</label>
+            <input type="text" id="quit_veiculoAdquiridoModelo" placeholder="Ex: FIAT/FASTBACK IMPETUS">
+          </div>
+          <div class="form-item">
+            <label for="quit_veiculoAdquiridoAnoModelo">Ano/Modelo do veículo adquirido</label>
+            <input type="text" id="quit_veiculoAdquiridoAnoModelo" placeholder="2024/2025">
+          </div>
+          <div class="form-item">
+            <label for="quit_veiculoAdquiridoCor">Cor do veículo adquirido</label>
+            <input type="text" id="quit_veiculoAdquiridoCor" placeholder="Cor">
+          </div>
+          <div class="form-item">
+            <label for="quit_veiculoAdquiridoChassi">Chassi do veículo adquirido</label>
+            <input type="text" id="quit_veiculoAdquiridoChassi" placeholder="Chassi">
+          </div>
+          <div class="form-item">
+            <label for="quit_contratoNumero">Contrato nº</label>
+            <input type="text" id="quit_contratoNumero" placeholder="Número do contrato">
+          </div>
+          <div class="form-item">
+            <label for="quit_valorQuitacao">Valor (R$) da quitação</label>
+            <input type="text" id="quit_valorQuitacao" inputmode="decimal" placeholder="Ex: 30000 ou 30.000,00">
+          </div>
+        </div>
+
+        <p class="helper"><strong></strong></p>
+
+        <div class="doc-actions">
+          <button class="btn btn-quitacao" type="button" onclick="gerarTermoQuitacaoTerceiro()">✅ Gerar Termo de Quitação (Terceiro)</button>
+        </div>
+      </div>
+
+      <!-- =========================
+           4) INSTRUMENTO RESPONSABILIDADE
+           ========================= -->
+      <div class="doc-card hidden" id="doc-instrumento">
+        <div class="head">
+          <div class="doc-title-pill doc-title-inst">INSTRUMENTO DE RESPONSABILIDADE</div>
+        </div>
+
+        <div class="section-title">Dados do Cliente</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="inst_nomeCompleto">Nome Completo</label>
+            <input type="text" id="inst_nomeCompleto" placeholder="Nome completo do cliente">
+          </div>
+          <div class="form-item">
+            <label for="inst_cpfCnpj">CPF/CNPJ</label>
+            <input type="text" id="inst_cpfCnpj" placeholder="000.000.000-00">
+          </div>
+          <div class="form-item">
+            <label for="inst_cidade">Cidade</label>
+            <input type="text" id="inst_cidade" placeholder="Nome da cidade">
+          </div>
+          <div class="form-item">
+            <label for="inst_placa">Placa (opcional p/ nome do arquivo)</label>
+            <input type="text" id="inst_placa" placeholder="ABC1D23 (opcional)">
+          </div>
+        </div>
+
+        <div class="section-title">Dados do Veículo</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="inst_modelo">Modelo do Veículo</label>
+            <input type="text" id="inst_modelo" placeholder="Ex: FIAT/FASTBACK">
+          </div>
+          <div class="form-item">
+            <label for="inst_chassi">Chassi</label>
+            <input type="text" id="inst_chassi" placeholder="17 caracteres">
+          </div>
+        </div>
+
+        <div class="section-title">Dados de Entrega</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="inst_dataEntrega">Data da entrega</label>
+            <input type="text" id="inst_dataEntrega" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10">
+          </div>
+          <div class="form-item">
+            <label for="inst_horaEntrega">Hora da entrega</label>
+            <input type="text" id="inst_horaEntrega" inputmode="numeric" placeholder="hh:mm" maxlength="5">
+          </div>
+        </div>
+
+        <p class="helper">Dica: ao digitar apenas números, o sistema coloca as barras/“:” automaticamente (ex.: 10122025 → 10/12/2025).</p>
+
+        <div class="doc-actions">
+          <button class="btn btn-responsabilidade" type="button" onclick="gerarInstrumentoResponsabilidade()">🛡️ Gerar Instrumento de Responsabilidade</button>
+        </div>
+      </div>
+
+      <!-- =========================
+           5) DECLARAÇÃO DE RESIDÊNCIA (placa removida)
+           ========================= -->
+      <div class="doc-card hidden" id="doc-residencia">
+        <div class="head">
+          <div class="doc-title-pill doc-title-res">DECLARAÇÃO DE RESIDÊNCIA</div>
+        </div>
+
+        <div class="section-title">Dados do Declarante</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="res_nomeCompleto">Nome Completo</label>
+            <input type="text" id="res_nomeCompleto" placeholder="Nome completo do cliente">
+          </div>
+          <div class="form-item">
+            <label for="res_cpfCnpj">CPF</label>
+            <input type="text" id="res_cpfCnpj" placeholder="000.000.000-00">
+          </div>
+          <div class="form-item">
+            <label for="res_endereco">Endereço</label>
+            <input type="text" id="res_endereco" placeholder="Rua/av, número, complemento">
+          </div>
+          <div class="form-item">
+            <label for="res_bairro">Bairro</label>
+            <input type="text" id="res_bairro" placeholder="Nome do bairro">
+          </div>
+          <div class="form-item">
+            <label for="res_cidade">Cidade</label>
+            <input type="text" id="res_cidade" placeholder="Nome da cidade">
+          </div>
+          <div class="form-item">
+            <label for="res_estado">Estado</label>
+            <input type="text" id="res_estado" placeholder="Sigla do Estado">
+          </div>
+        </div>
+
+        <div class="doc-actions">
+          <button class="btn btn-residencia" type="button" onclick="gerarDeclaracaoResidencia()">🏠 Gerar Declaração de Residência</button>
+        </div>
+      </div>
+
+      <!-- =========================
+           6) DECLARAÇÃO DE DEPÓSITO PARA TERCEIROS
+           ========================= -->
+      <div class="doc-card hidden" id="doc-deposito">
+        <div class="head">
+          <div class="doc-title-pill doc-title-dep">DECLARAÇÃO DE DEPÓSITO PARA TERCEIROS</div>
+        </div>
+
+        <div class="section-title">Dados do Declarante</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="dep_nomeCompleto">Nome Completo</label>
+            <input type="text" id="dep_nomeCompleto" placeholder="Nome completo do declarante">
+          </div>
+          <div class="form-item">
+            <label for="dep_cpfCnpj">CPF/CNPJ</label>
+            <input type="text" id="dep_cpfCnpj" placeholder="000.000.000-00">
+          </div>
+          <div class="form-item">
+            <label for="dep_rg">RG</label>
+            <input type="text" id="dep_rg" placeholder="RG do declarante">
+          </div>
+        </div>
+
+        <div class="section-title">Dados do Depósito</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="dep_valor">Valor do depósito</label>
+            <input type="text" id="dep_valor" inputmode="decimal" placeholder="Ex: 300 ou 300,00">
+          </div>
+          <div class="form-item">
+            <label for="dep_valorExtenso">Valor por extenso (opcional)</label>
+            <input type="text" id="dep_valorExtenso" placeholder="Ex: trezentos reais">
+          </div>
+          <div class="form-item">
+            <label for="dep_dataDeposito">Data do depósito</label>
+            <input type="text" id="dep_dataDeposito" inputmode="numeric" placeholder="dd/mm/aaaa" maxlength="10">
+          </div>
+        </div>
+
+        <div class="section-title">Dados Bancários (San Marino)</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="dep_banco">Banco</label>
+            <input type="text" id="dep_banco" placeholder="Ex: ITAU" value="ITAU">
+          </div>
+          <div class="form-item">
+            <label for="dep_agencia">Agência</label>
+            <input type="text" id="dep_agencia" placeholder="Ex: 0280" value="0280">
+          </div>
+          <div class="form-item">
+            <label for="dep_conta">Conta Corrente</label>
+            <input type="text" id="dep_conta" placeholder="Ex: 00110-8" value="00110-8">
+          </div>
+        </div>
+
+        <div class="section-title">Dados do Veículo e do Faturamento</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="dep_chassiPlaca">Chassi/Placa</label>
+            <input type="text" id="dep_chassiPlaca" placeholder="Informe o chassi e/ou placa">
+          </div>
+          <div class="form-item">
+            <label for="dep_faturadoNome">Faturado em nome de</label>
+            <input type="text" id="dep_faturadoNome" placeholder="Nome / Razão social">
+          </div>
+          <div class="form-item">
+            <label for="dep_faturadoCpfCnpj">CPF/CNPJ do faturado</label>
+            <input type="text" id="dep_faturadoCpfCnpj" placeholder="000.000.000-00">
+          </div>
+        </div>
+
+        <div class="section-title">Local e Data (linha superior)</div>
+        <div class="form-grid">
+          <div class="form-item">
+            <label for="dep_cidade">Cidade</label>
+            <input type="text" id="dep_cidade" placeholder="Ex: Porto Alegre" value="">
+          </div>
+          <div class="form-item">
+            <label for="dep_dia">Dia</label>
+            <input type="text" id="dep_dia" inputmode="numeric" placeholder="Ex: 13" maxlength="2">
+          </div>
+          <div class="form-item">
+            <label for="dep_mesExtenso">Mês (por extenso)</label>
+            <input type="text" id="dep_mesExtenso" placeholder="Ex: abril">
+          </div>
+          <div class="form-item">
+            <label for="dep_ano">Ano</label>
+            <input type="text" id="dep_ano" inputmode="numeric" placeholder="2026" maxlength="9">
+          </div>
+        </div>
+
+        <p class="helper"> <strong></strong></p>
+
+        <div class="doc-actions">
+          <button class="btn btn-deposito" type="button" onclick="gerarDeclaracaoDepositoTerceiros()">💳 Gerar Declaração de Depósito para Terceiros</button>
+        </div>
+      </div>
+
     </div>
-    
-    <div style="text-align: center; margin-top: 30px; padding: 20px;">
-        <p style="color: #c0c0c0; font-size: 17px; opacity: 0.9; margin: 0;">
-            Desenvolvido por Alberto Mateus para o Grupo San Marino
-        </p>
-    </div>
-</div>
+
+    <div class="footer">Desenvolvido por Alberto Mateus para o Grupo San Marino</div>
+  </div>
 
 <script>
+/* =========================
+   CAPA (abre 1 documento por vez)
+   ========================= */
+function abrirDocumento(docId){
+  const cards = document.querySelectorAll('.doc-card');
+  cards.forEach(c => c.classList.add('hidden'));
+  const el = document.getElementById(docId);
+  if(el){
+    el.classList.remove('hidden');
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+/* =========================
+   UI
+   ========================= */
 function mostrarStatus(msg, tipo) {
-    const el = document.getElementById('status');
-    el.textContent = msg;
-    el.className = 'status ' + tipo;
-    el.style.display = 'block';
-    setTimeout(() => el.style.display = 'none', 5000);
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status ' + tipo;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 5000);
 }
 
-function formatarAnoModelo(s) {
-    if (!s || !s.includes('/')) return s;
-    const [a1, a2] = s.split('/');
-    return (a1.trim().length === 2 ? '20' + a1.trim() : a1.trim()) + '/' + (a2.trim().length === 2 ? '20' + a2.trim() : a2.trim());
-}
-
-function obterDados() {
-    return {
-        nomeCompleto: document.getElementById('nomeCompleto').value.trim(),
-        cpfCnpj: document.getElementById('cpfCnpj').value.trim(),
-        endereco: document.getElementById('endereco').value.trim(),
-        bairro: document.getElementById('bairro').value.trim(),
-        cep: document.getElementById('cep').value.trim(),
-        cidade: document.getElementById('cidade').value.trim(),
-        estado: document.getElementById('estado').value.trim(),
-        modelo: document.getElementById('modelo').value.trim(),
-        placa: document.getElementById('placa').value.trim(),
-        anoModelo: document.getElementById('anoModelo').value.trim(),
-        chassi: document.getElementById('chassi').value.trim(),
-        renavam: document.getElementById('renavam').value.trim(),
-        cor: document.getElementById('cor').value.trim()
-    };
-}
-
-function gerarProcuracaoAcordo() {
-    const dados = obterDados();
-    
-    if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.placa) {
-        mostrarStatus('Para a Procuração de Acordo, preencha pelo menos o nome completo, CPF/CNPJ e placa do veículo.', 'error');
-        return;
+/* =========================
+   Máscaras (DATA e HORA)
+   ========================= */
+function applyDateMask(el){
+  if(!el) return;
+  el.addEventListener('input', () => {
+    let v = (el.value || '').replace(/\D/g,'').slice(0,8); // ddmmyyyy
+    if(v.length >= 5){
+      el.value = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
+    } else if(v.length >= 3){
+      el.value = v.slice(0,2) + '/' + v.slice(2);
+    } else {
+      el.value = v;
     }
-    
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-    let { nomeCompleto, cpfCnpj, endereco, bairro, cep, cidade, estado, modelo, placa, anoModelo, chassi, renavam, cor } = dados;
-    anoModelo = formatarAnoModelo(anoModelo);
-    
-    doc.setFont('times', 'bold');
-    doc.setFontSize(14);
-    doc.text('PROCURAÇÃO', 105, 25, { align: 'center' });
-    
+  });
+}
+
+function applyTimeMask(el){
+  if(!el) return;
+  el.addEventListener('input', () => {
+    let v = (el.value || '').replace(/\D/g,'').slice(0,4); // hhmm
+    if(v.length >= 3){
+      el.value = v.slice(0,2) + ':' + v.slice(2);
+    } else {
+      el.value = v;
+    }
+  });
+}
+
+
+/* =========================
+   Máscara ANO/MODELO (AAAA/AAAA)
+   ========================= */
+function applyAnoModeloMask(el){
+  if(!el) return;
+  el.addEventListener('input', () => {
+    // Mantém somente números e limita em 8 dígitos (AAAAMMMM)
+    let v = (el.value || '').replace(/\D/g,'').slice(0,8);
+
+    // Insere a barra após o 4º dígito
+    if(v.length >= 5){
+      el.value = v.slice(0,4) + '/' + v.slice(4);
+    } else {
+      el.value = v;
+    }
+  });
+}
+
+/* =========================
+   Formatação moeda BRL
+   ========================= */
+function normalizeToAscii(str) {
+  if (!str) return '';
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function parseCurrencyToNumberBR(value){
+  const v = (value || '').toString().trim();
+  if(!v) return NaN;
+
+  let s = v.replace(/R\$\s?/gi,'').replace(/\s/g,'');
+  s = s.replace(/\./g,'').replace(',', '.');
+  const n = Number(s);
+  return Number.isFinite(n) ? n : NaN;
+}
+
+function formatBRL(n){
+  if(!Number.isFinite(n)) return '';
+  const formatted = new Intl.NumberFormat('pt-BR', { style:'currency', currency:'BRL' }).format(n);
+  return formatted.replace(/\u00A0/g, ' ');
+}
+
+function attachCurrencyBehavior(el){
+  if(!el) return;
+  el.addEventListener('blur', () => {
+    const n = parseCurrencyToNumberBR(el.value);
+    if(Number.isFinite(n)) el.value = formatBRL(n);
+  });
+}
+
+/* =========================
+   Helpers de dados
+   ========================= */
+function formatarAnoModelo(s) {
+  if (!s) return s;
+  if (!s.includes('/')) return s;
+  const [a1, a2] = s.split('/');
+  return (a1.trim().length === 2 ? '20' + a1.trim() : a1.trim()) + '/' + (a2.trim().length === 2 ? '20' + a2.trim() : a2.trim());
+}
+
+function upperOr(v, fallback) {
+  const t = (v || '').trim();
+  return t ? t.toUpperCase() : (fallback || '');
+}
+
+function sanitizeForFilename(str) {
+  const s = normalizeToAscii((str || '').trim()).toUpperCase();
+  const cleaned = s.replace(/[^A-Z0-9]+/g, '_').replace(/_+/g, '_').replace(/^_+|_+$/g, '');
+  return cleaned || 'SEM_DADO';
+}
+
+function nomeCurtoParaArquivo(nomeCompleto) {
+  const n = normalizeToAscii((nomeCompleto || '').trim());
+  if (!n) return 'CLIENTE';
+  const parts = n.split(/\s+/).filter(Boolean);
+  if (parts.length === 1) return parts[0];
+  return parts[0] + '_' + parts[parts.length - 1];
+}
+
+function buildFilename(prefix, placa, nomeCompleto) {
+  const p = sanitizeForFilename(placa || 'SEM_PLACA');
+  const n = sanitizeForFilename(nomeCurtoParaArquivo(nomeCompleto));
+  const pre = sanitizeForFilename(prefix);
+  return `${pre}_${p}_${n}.pdf`;
+}
+
+/* =========================
+   Coleta de dados (INDIVIDUAL)
+   ========================= */
+function obterDadosAcordo() {
+  return {
+    nomeCompleto: document.getElementById('acordo_nomeCompleto').value.trim(),
+    cpfCnpj: document.getElementById('acordo_cpfCnpj').value.trim(),
+    endereco: document.getElementById('acordo_endereco').value.trim(),
+    bairro: document.getElementById('acordo_bairro').value.trim(),
+    cep: document.getElementById('acordo_cep').value.trim(),
+    cidade: document.getElementById('acordo_cidade').value.trim(),
+    estado: document.getElementById('acordo_estado').value.trim(),
+
+    modelo: document.getElementById('acordo_modelo').value.trim(),
+    placa: document.getElementById('acordo_placa').value.trim(),
+    anoModelo: document.getElementById('acordo_anoModelo').value.trim(),
+    chassi: document.getElementById('acordo_chassi').value.trim(),
+    renavam: document.getElementById('acordo_renavam').value.trim(),
+    cor: document.getElementById('acordo_cor').value.trim()
+  };
+}
+
+function obterDadosRecebimento() {
+  return {
+    nomeCompleto: document.getElementById('rec_nomeCompleto').value.trim(),
+    cpfCnpj: document.getElementById('rec_cpfCnpj').value.trim(),
+    endereco: document.getElementById('rec_endereco').value.trim(),
+    bairro: document.getElementById('rec_bairro').value.trim(),
+    cidade: document.getElementById('rec_cidade').value.trim(),
+    estado: document.getElementById('rec_estado').value.trim(),
+
+    modelo: document.getElementById('rec_modelo').value.trim(),
+    placa: document.getElementById('rec_placa').value.trim(),
+    anoModelo: document.getElementById('rec_anoModelo').value.trim(),
+    chassi: document.getElementById('rec_chassi').value.trim(),
+    cor: document.getElementById('rec_cor').value.trim()
+  };
+}
+
+function obterDadosResidencia() {
+  return {
+    nomeCompleto: document.getElementById('res_nomeCompleto').value.trim(),
+    cpfCnpj: document.getElementById('res_cpfCnpj').value.trim(),
+    endereco: document.getElementById('res_endereco').value.trim(),
+    bairro: document.getElementById('res_bairro').value.trim(),
+    cidade: document.getElementById('res_cidade').value.trim(),
+    estado: document.getElementById('res_estado').value.trim()
+  };
+}
+
+function obterDadosDepositoTerceiros() {
+  return {
+    nomeCompleto: document.getElementById('dep_nomeCompleto').value.trim(),
+    cpfCnpj: document.getElementById('dep_cpfCnpj').value.trim(),
+    rg: document.getElementById('dep_rg').value.trim(),
+
+    valor: document.getElementById('dep_valor').value.trim(),
+    valorExtenso: document.getElementById('dep_valorExtenso').value.trim(),
+    dataDeposito: document.getElementById('dep_dataDeposito').value.trim(),
+
+    banco: document.getElementById('dep_banco').value.trim(),
+    agencia: document.getElementById('dep_agencia').value.trim(),
+    conta: document.getElementById('dep_conta').value.trim(),
+
+    chassiPlaca: document.getElementById('dep_chassiPlaca').value.trim(),
+    faturadoNome: document.getElementById('dep_faturadoNome').value.trim(),
+    faturadoCpfCnpj: document.getElementById('dep_faturadoCpfCnpj').value.trim(),
+
+    cidade: document.getElementById('dep_cidade').value.trim(),
+    dia: document.getElementById('dep_dia').value.trim(),
+    mesExtenso: document.getElementById('dep_mesExtenso').value.trim(),
+    ano: document.getElementById('dep_ano').value.trim()
+  };
+}
+
+function obterDadosInstrumento() {
+  return {
+    nomeCompleto: document.getElementById('inst_nomeCompleto').value.trim(),
+    cpfCnpj: document.getElementById('inst_cpfCnpj').value.trim(),
+    cidade: document.getElementById('inst_cidade').value.trim(),
+    placa: document.getElementById('inst_placa').value.trim(),
+
+    modelo: document.getElementById('inst_modelo').value.trim(),
+    chassi: document.getElementById('inst_chassi').value.trim(),
+
+    dataEntrega: document.getElementById('inst_dataEntrega').value.trim(),
+    horaEntrega: document.getElementById('inst_horaEntrega').value.trim()
+  };
+}
+
+function obterDadosQuitacao() {
+  return {
+    nomeCompleto: document.getElementById('quit_nomeCompleto').value.trim(),
+    cpfCnpj: document.getElementById('quit_cpfCnpj').value.trim(),
+    cidade: document.getElementById('quit_cidade').value.trim(),
+
+    modelo: document.getElementById('quit_modelo').value.trim(),
+    anoModelo: document.getElementById('quit_anoModelo').value.trim(),
+    placa: document.getElementById('quit_placa').value.trim(),
+    chassi: document.getElementById('quit_chassi').value.trim(),
+    cor: document.getElementById('quit_cor').value.trim(),
+
+    cedenteNome: document.getElementById('quit_cedenteNome').value.trim(),
+    cedenteCpfCnpj: document.getElementById('quit_cedenteCpfCnpj').value.trim(),
+    cedenteEndereco: document.getElementById('quit_cedenteEndereco').value.trim(),
+    cedenteNumero: document.getElementById('quit_cedenteNumero').value.trim(),
+
+    veiculoAdquiridoModelo: document.getElementById('quit_veiculoAdquiridoModelo').value.trim(),
+    veiculoAdquiridoAnoModelo: document.getElementById('quit_veiculoAdquiridoAnoModelo').value.trim(),
+    veiculoAdquiridoCor: document.getElementById('quit_veiculoAdquiridoCor').value.trim(),
+    veiculoAdquiridoChassi: document.getElementById('quit_veiculoAdquiridoChassi').value.trim(),
+    contratoNumero: document.getElementById('quit_contratoNumero').value.trim(),
+    valorQuitacao: document.getElementById('quit_valorQuitacao').value.trim()
+  };
+}
+
+/* =========================
+   Padronização do PDF (A4)
+   ========================= */
+const PDF_LAYOUT = {
+  pageWidth: 210,
+  pageHeight: 297,
+  marginLeft: 25,
+  marginRight: 25,
+  marginTop: 25,
+  marginBottom: 25,
+  firstLineIndent: 10,
+  paragraphGap: 6
+};
+
+function createDocA4() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  doc.setFont('times', 'normal');
+  doc.setFontSize(12);
+  doc.setLineHeightFactor(1.6);
+  return doc;
+}
+
+function contentWidth() {
+  return PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginLeft - PDF_LAYOUT.marginRight;
+}
+
+function ensureSpace(doc, y, needed) {
+  const bottomLimit = PDF_LAYOUT.pageHeight - PDF_LAYOUT.marginBottom;
+  if (y + needed > bottomLimit) {
+    doc.addPage();
     doc.setFont('times', 'normal');
     doc.setFontSize(12);
-    const m = 25, w = 160;
-    let y = 45;
-    
-    const t1 = `Por este instrumento particular de procuração, ${nomeCompleto.toUpperCase()}, CPF/CNPJ: ${cpfCnpj}, ENDEREÇO: ${endereco.toUpperCase() || 'NÃO INFORMADO'}, BAIRRO: ${bairro.toUpperCase() || 'NÃO INFORMADO'} CEP: ${cep || 'NÃO INFORMADO'}, CIDADE: ${cidade.toUpperCase() || 'NÃO INFORMADO'}, ESTADO: ${estado.toUpperCase() || 'NÃO INFORMADO'}.`;
-    
-    doc.setLineHeightFactor(1.4);
-    doc.text(t1, m, y, { maxWidth: w, align: 'justify' });
-    y += doc.getTextDimensions(t1, { maxWidth: w }).h + 10;
-    
-    const t2 = 'Dados pelos quais responsabilizo-me civil e criminalmente, nomeio e constituo meu bastante procurador: RAMIRO ILHA, portador do CPF: 375.722.450-72 e RG: 9021949971, domiciliado na Rua Dr. Voltaire Pires, Nº 430, na cidade de Porto Alegre/RS, para os fins específicos de assinar a GRT, Guia de Responsabilidade Técnica, e também o "DE ACORDO" na compra do veículo descrito abaixo:';
-    
-    doc.text(t2, m, y, { maxWidth: w, align: 'justify' });
-    y += doc.getTextDimensions(t2, { maxWidth: w }).h + 15;
-    
-    doc.setFont('times', 'bold');
     doc.setLineHeightFactor(1.6);
-    doc.text(`MODELO DO VEÍCULO: ${modelo.toUpperCase() || 'NÃO INFORMADO'}`, m, y); y += 10;
-    doc.text(`PLACA: ${placa.toUpperCase()}`, m, y); y += 8;
-    doc.text(`ANO/MODELO: ${anoModelo || 'NÃO INFORMADO'}`, m, y); y += 8;
-    doc.text(`CHASSI: ${chassi.toUpperCase() || 'NÃO INFORMADO'}`, m, y); y += 8;
-    doc.text(`RENAVAM: ${renavam || 'NÃO INFORMADO'}`, m, y); y += 8;
-    doc.text(`COR: ${cor.toUpperCase() || 'NÃO INFORMADO'}`, m, y); y += 25;
-    
+    return PDF_LAYOUT.marginTop;
+  }
+  return y;
+}
+
+function addTitle(doc, title, subtitle, opts) {
+  const options = opts || {};
+  const titleSize = options.titleSize || 14;
+  const subtitleSize = options.subtitleSize || 12;
+  const gapAfter = options.gapAfter ?? 10;
+
+  let y = PDF_LAYOUT.marginTop;
+  const centerX = PDF_LAYOUT.pageWidth / 2;
+
+  doc.setFont('times', 'bold');
+  doc.setFontSize(titleSize);
+  doc.text(String(title || '').toUpperCase(), centerX, y, { align: 'center' });
+  y += 7;
+
+  if (subtitle) {
+    doc.setFontSize(subtitleSize);
+    const sub = String(subtitle || '').toUpperCase();
+    const lines = doc.splitTextToSize(sub, contentWidth());
+    doc.text(lines, centerX, y, { align: 'center' });
+    y += (lines.length * 6) + 4;
+  } else {
+    y += 6;
+  }
+
+  doc.setFont('times', 'normal');
+  doc.setFontSize(12);
+  doc.setLineHeightFactor(1.6);
+
+  return y + gapAfter;
+}
+
+function addLocalDataLinha(doc, y, cidade) {
+  y = ensureSpace(doc, y, 18);
+  doc.setFont('times', 'normal');
+  doc.setFontSize(12);
+  doc.text(`${upperOr(cidade, '____________________')}, ____ de ____________________ de ________.`, PDF_LAYOUT.pageWidth / 2, y, { align: 'center' });
+  return y + 15;
+}
+
+function addAssinaturaSimples(doc, y, label) {
+  y = ensureSpace(doc, y, 28);
+  const center = PDF_LAYOUT.pageWidth / 2;
+  doc.line(center - 55, y, center + 55, y);
+  y += 6;
+  doc.setFont('times', 'normal');
+  doc.setFontSize(10);
+  doc.text(label || 'Assinatura', center, y, { align: 'center' });
+  return y + 8;
+}
+
+function addAssinaturasDuplas(doc, y, leftLabel, rightLabel) {
+  y = ensureSpace(doc, y, 35);
+  doc.line(PDF_LAYOUT.marginLeft, y, PDF_LAYOUT.marginLeft + 70, y);
+  doc.line(PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginRight - 70, y, PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginRight, y);
+  y += 6;
+  doc.setFont('times', 'normal');
+  doc.setFontSize(10);
+  doc.text(leftLabel || 'Assinatura', PDF_LAYOUT.marginLeft + 35, y, { align: 'center' });
+  doc.text(rightLabel || 'Assinatura', PDF_LAYOUT.pageWidth - PDF_LAYOUT.marginRight - 35, y, { align: 'center' });
+  return y + 10;
+}
+
+/* =========================
+   Texto justificado (normal)
+   ========================= */
+function drawJustifiedParagraph(doc, text, x, y, maxWidth, indentFirstLineMm) {
+  const raw = (text || '').replace(/\s+/g, ' ').trim();
+  if (!raw) return y;
+
+  const indent = Math.max(0, indentFirstLineMm || 0);
+
+  const words = raw.split(' ').filter(Boolean).map(t => ({ text: t }));
+  const baseSpaceWidth = doc.getTextWidth(' ');
+  const lineHeight = doc.getTextDimensions('Mg').h * doc.getLineHeightFactor();
+
+  function buildLines(targetWidthFirst, targetWidthOther) {
+    const lines = [];
+    let current = [];
+    let isFirstLine = true;
+
+    function lineWidth(ws) {
+      let total = 0;
+      for (let i = 0; i < ws.length; i++) {
+        total += doc.getTextWidth(ws[i].text);
+        if (i < ws.length - 1) total += baseSpaceWidth;
+      }
+      return total;
+    }
+
+    for (const w of words) {
+      const targetW = isFirstLine ? targetWidthFirst : targetWidthOther;
+
+      if (current.length === 0) {
+        current.push(w);
+        continue;
+      }
+
+      const tentative = current.concat([w]);
+      const total = lineWidth(tentative);
+
+      if (total > targetW) {
+        lines.push({ words: current, isFirstLine });
+        current = [w];
+        isFirstLine = false;
+      } else {
+        current = tentative;
+      }
+    }
+    if (current.length) lines.push({ words: current, isFirstLine });
+    return lines;
+  }
+
+  const lines = buildLines(maxWidth - indent, maxWidth);
+
+  for (let li = 0; li < lines.length; li++) {
+    const { words: lineWords, isFirstLine } = lines[li];
+    const isLastLine = (li === lines.length - 1);
+
+    const targetW = isFirstLine ? (maxWidth - indent) : maxWidth;
+    const startX = isFirstLine ? (x + indent) : x;
+
+    let wordsOnlyWidth = 0;
+    for (const w of lineWords) wordsOnlyWidth += doc.getTextWidth(w.text);
+
+    const numSpaces = Math.max(0, lineWords.length - 1);
+
+    let extraPerSpace = 0;
+    if (!isLastLine && numSpaces > 0) {
+      const baseLineWidth = wordsOnlyWidth + (numSpaces * baseSpaceWidth);
+      const extra = targetW - baseLineWidth;
+      extraPerSpace = extra > 0 ? (extra / numSpaces) : 0;
+    }
+
+    let cx = startX;
+    for (let wi = 0; wi < lineWords.length; wi++) {
+      const w = lineWords[wi];
+      doc.text(w.text, cx, y);
+      cx += doc.getTextWidth(w.text);
+      if (wi < lineWords.length - 1) cx += baseSpaceWidth + extraPerSpace;
+    }
+
+    y += lineHeight;
+    y = ensureSpace(doc, y, lineHeight + 2);
+  }
+
+  return y;
+}
+
+/* =========================
+   Texto justificado com negrito (segmentos)
+   ========================= */
+function desenharParagrafoJustificadoComNegrito(doc, segments, x, y, maxWidth, indentFirstLineMm) {
+  const indent = Math.max(0, indentFirstLineMm || 0);
+
+  const words = [];
+  for (const seg of segments) {
+    const style = seg.style === 'bold' ? 'bold' : 'normal';
+    const parts = (seg.text || '').trim().split(/\s+/).filter(Boolean);
+    for (const p of parts) words.push({ text: p, style });
+  }
+
+  const baseSpaceWidth = doc.getTextWidth(' ');
+  const lineHeight = doc.getTextDimensions('Mg').h * doc.getLineHeightFactor();
+
+  function wordWidth(w) {
+    doc.setFont('times', w.style);
+    return doc.getTextWidth(w.text);
+  }
+
+  function lineWidth(ws) {
+    let total = 0;
+    for (let i = 0; i < ws.length; i++) {
+      total += ws[i]._w;
+      if (i < ws.length - 1) total += baseSpaceWidth;
+    }
+    return total;
+  }
+
+  const lines = [];
+  let current = [];
+  let isFirstLine = true;
+
+  for (const w of words) {
+    const wW = wordWidth(w);
+    const ww = { ...w, _w: wW };
+    const targetW = isFirstLine ? (maxWidth - indent) : maxWidth;
+
+    if (current.length === 0) {
+      current.push(ww);
+      continue;
+    }
+
+    const tentative = current.concat([ww]);
+    const total = lineWidth(tentative);
+
+    if (total > targetW) {
+      lines.push({ words: current, isFirstLine });
+      current = [ww];
+      isFirstLine = false;
+    } else {
+      current = tentative;
+    }
+  }
+  if (current.length) lines.push({ words: current, isFirstLine });
+
+  for (let li = 0; li < lines.length; li++) {
+    const { words: lineWords, isFirstLine } = lines[li];
+    const isLastLine = (li === lines.length - 1);
+
+    const targetW = isFirstLine ? (maxWidth - indent) : maxWidth;
+    const startX = isFirstLine ? (x + indent) : x;
+
+    let wordsOnlyWidth = 0;
+    for (const w of lineWords) wordsOnlyWidth += w._w;
+
+    const numSpaces = Math.max(0, lineWords.length - 1);
+
+    let extraPerSpace = 0;
+    if (!isLastLine && numSpaces > 0) {
+      const baseLineWidth = wordsOnlyWidth + (numSpaces * baseSpaceWidth);
+      const extra = targetW - baseLineWidth;
+      extraPerSpace = extra > 0 ? (extra / numSpaces) : 0;
+    }
+
+    let cx = startX;
+    for (let wi = 0; wi < lineWords.length; wi++) {
+      const w = lineWords[wi];
+      doc.setFont('times', w.style);
+      doc.text(w.text, cx, y);
+      cx += w._w;
+      if (wi < lineWords.length - 1) cx += baseSpaceWidth + extraPerSpace;
+    }
+
     doc.setFont('times', 'normal');
-    doc.text('CIDADE: ____________________, ESTADO: ____, ____ de __________ de ____.', 105, y, { align: 'center' });
-    y += 35;
-    
-    doc.line(65, y, 145, y);
-    y += 5;
-    doc.text('(Assinatura reconhecida por autenticidade)', 105, y, { align: 'center' });
-    
-    doc.save(`PROCURACAO_ACORDO_${placa || 'SEM_PLACA'}_${(nomeCompleto.split(' ')[0] || 'CLIENTE')}.pdf`);
-    mostrarStatus('PDF da Procuração de Acordo gerado com sucesso!', 'success');
+
+    y += lineHeight;
+    y = ensureSpace(doc, y, lineHeight + 2);
+  }
+
+  return y;
+}
+
+/* =========================
+   Documentos
+   ========================= */
+function gerarProcuracaoAcordo() {
+  const dados = obterDadosAcordo();
+
+  if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.placa) {
+    mostrarStatus('Para a Procuração de Acordo, preencha pelo menos o nome completo, CPF/CNPJ e placa do veículo.', 'error');
+    return;
+  }
+
+  const doc = createDocA4();
+  const x = PDF_LAYOUT.marginLeft;
+  const w = contentWidth();
+
+  let {
+    nomeCompleto, cpfCnpj, endereco, bairro, cep, cidade, estado,
+    modelo, placa, anoModelo, chassi, renavam, cor
+  } = dados;
+
+  anoModelo = formatarAnoModelo(anoModelo);
+
+  let y = addTitle(doc, 'Procuração', null);
+
+  const p1 = `Por este instrumento particular de procuração, ${upperOr(nomeCompleto, '')}, CPF/CNPJ: ${cpfCnpj}, ENDEREÇO: ${upperOr(endereco, 'NÃO INFORMADO')}, BAIRRO: ${upperOr(bairro, 'NÃO INFORMADO')}, CEP: ${cep || 'NÃO INFORMADO'}, CIDADE: ${upperOr(cidade, 'NÃO INFORMADO')}, ESTADO: ${upperOr(estado, 'NÃO INFORMADO')}.`;
+  y = drawJustifiedParagraph(doc, p1, x, y, w, PDF_LAYOUT.firstLineIndent);
+  y += PDF_LAYOUT.paragraphGap;
+
+  const segmentosT2 = [
+    { style: 'normal', text: 'Dados pelos quais responsabilizo-me civil e criminalmente, nomeio e constituo meu bastante procurador:' },
+    { style: 'bold',   text: 'Rafael Pickrodt de Castro' },
+    { style: 'normal', text: ', portador do CPF: 030.571.800-27 e RG: 2090921905, domiciliado na Rua Alexio Fagherazzi Nº37, na cidade de Porto Alegre; e/ou' },
+    { style: 'bold',   text: 'Ramiro Ilha' },
+    { style: 'normal', text: ', portador do CPF: 375.722.450-72 e RG: 9021949971, domiciliado na Rua Dr. Voltaire Pires, 430 / 1, na cidade de Porto Alegre; e/ou' },
+    { style: 'bold',   text: 'Alessandra de Souza Santos' },
+    { style: 'normal', text: ', portadora do CPF: 971.624.000-78 e RG: 1077846771, domiciliada na Rua Eloema de Oliveira Barcelos, 446, na cidade de Porto Alegre; para os fins específicos de “assinar a GRT – Guia de Responsabilidade Técnica” e também o “de acordo” na compra do veículo descrito abaixo, bem como assinar outros requerimentos, junto ao DETRAN/RS, com a finalidade de proceder com a realização de emplacamento/transferência do veículo objeto deste documento:' }
+  ];
+
+  y = ensureSpace(doc, y, 12);
+  y = desenharParagrafoJustificadoComNegrito(doc, segmentosT2, x, y, w, PDF_LAYOUT.firstLineIndent);
+  y += PDF_LAYOUT.paragraphGap + 2;
+
+  y = ensureSpace(doc, y, 50);
+  doc.setFont('times', 'bold');
+  doc.text(`MODELO DO VEÍCULO: ${upperOr(modelo, 'NÃO INFORMADO')}`, x, y); y += 7;
+  doc.text(`PLACA: ${upperOr(placa, 'SEM PLACA')}`, x, y); y += 7;
+  doc.text(`ANO/MODELO: ${anoModelo || 'NÃO INFORMADO'}`, x, y); y += 7;
+  doc.text(`CHASSI: ${upperOr(chassi, 'NÃO INFORMADO')}`, x, y); y += 7;
+  doc.text(`RENAVAM: ${renavam || 'NÃO INFORMADO'}`, x, y); y += 7;
+  doc.text(`COR: ${upperOr(cor, 'NÃO INFORMADO')}`, x, y); y += 10;
+  doc.setFont('times', 'normal');
+
+  y = addLocalDataLinha(doc, y, cidade);
+  y = addAssinaturaSimples(doc, y, '(Assinatura reconhecida por autenticidade)');
+
+  doc.save(buildFilename('PROCURACAO_ACORDO', placa, nomeCompleto));
+  mostrarStatus('PDF da Procuração de Acordo gerado com sucesso!', 'success');
 }
 
 function gerarProcuracaoRecebimento() {
-    const dados = obterDados();
-    
-    if (!dados.nomeCompleto || !dados.placa) {
-        mostrarStatus('Para a Procuração de Recebimento, preencha pelo menos o nome do cliente e a placa do veículo.', 'error');
-        return;
-    }
-    
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-    let { nomeCompleto, cpfCnpj, endereco, bairro, cidade, estado, modelo, placa, anoModelo, chassi, cor } = dados;
-    anoModelo = formatarAnoModelo(anoModelo);
-    
-    doc.setFont('times', 'bold');
-    doc.setFontSize(14);
-    doc.text('PROCURAÇÃO DE RECEBIMENTO DO USADO', 105, 20, { align: 'center' });
-    
-    doc.setFont('times', 'normal');
-    doc.setFontSize(10);
-    const m = 20, w = 170;
-    let y = 35;
-    
-    // Outorgante - usando dados do veículo (cliente proprietário)
-    const outorgante = `Outorgante: ${nomeCompleto.toUpperCase()} inscrito no CPF/CNPJ sob o nº ${cpfCnpj || 'NÃO INFORMADO'} com endereço ${endereco.toUpperCase() || 'NÃO INFORMADO'} Bairro: ${bairro.toUpperCase() || 'NÃO INFORMADO'} na cidade de ${cidade.toUpperCase() || 'NÃO INFORMADO'} Estado: ${estado.toUpperCase() || 'NÃO INFORMADO'}.`;
-    doc.setLineHeightFactor(1.3);
-    doc.text(outorgante, m, y, { maxWidth: w, align: 'justify' });
-    y += doc.getTextDimensions(outorgante, { maxWidth: w }).h + 8;
-    
-    // Outorgado - mantém os dados fixos da San Marino
-    const outorgado = 'Outorgado: San Marino Veículos Ltda., situada na Av. Ipiranga, 7110, Bairro Jardim Botânico, na cidade Porto Alegre, Estado Rio Grande do Sul, inscrita no CNPJ sob n.º 90.446.618/0001-72 e inscrição estadual n.º 0960799613.';
-    doc.text(outorgado, m, y, { maxWidth: w, align: 'justify' });
-    y += doc.getTextDimensions(outorgado, { maxWidth: w }).h + 8;
-    
-    // Objeto
-    doc.text('Objeto: O objeto desta procuração é o veículo abaixo descrito:', m, y);
-    y += 12;
-    
-    doc.setFont('times', 'bold');
-    doc.text(`MODELO DO VEÍCULO: ${modelo.toUpperCase() || 'NÃO INFORMADO'}`, m, y); y += 6;
-    doc.text(`PLACA: ${placa.toUpperCase()}`, m, y); y += 6;
-    doc.text(`ANO/MODELO: ${anoModelo || 'NÃO INFORMADO'}`, m, y); y += 6;
-    doc.text(`CHASSI: ${chassi.toUpperCase() || 'NÃO INFORMADO'}`, m, y); y += 6;
-    doc.text(`COR: ${cor.toUpperCase() || 'NÃO INFORMADO'}.`, m, y); y += 10;
-    
-    doc.setFont('times', 'normal');
-    
-    // Poderes
-    const poderes = 'Poderes: O Outorgante, nomeia e constitui seu procurador, o OUTORGADO, para o fim especial de:';
-    doc.text(poderes, m, y, { maxWidth: w });
-    y += doc.getTextDimensions(poderes, { maxWidth: w }).h + 6;
-    
-    const itens = [
-        'a) permutar, vender sem prestar contas e a quem melhor interessar, fazer dação em pagamento, aceitar e instituir cláusulas seguidas das demais formalidades relativas a venda do veículo de propriedade do outorgante, acima descrito;',
-        'b) receber valores, no todo ou em parcelas, dar e receber quitação, ceder e transigir, desistir, firmar acordo ou compromisso;',
-        'c) requerer documentos e/ou informações perante repartições e registros públicos;',
-        'd) efetuar qualquer espécie de procedimento ou de processo administrativo relativo ao veículo junto à Divisão de Trânsito;',
-        'e) proceder a liquidação das despesas do mesmo no que se refere às multas, transferência de propriedade tanto para terceiro quanto em favor do outorgado;',
-        'f) o outorgante, nos casos em que o veículo estiver pendente de quitação na modalidade de leasing junto a instituição financeira, concede os poderes especiais para o outorgado assinar e representa-lo como comprador perante a esta instituição financeira e ao Detran e, posteriormente, na qualidade de vendedor a quem ao outorgado interessar;',
-        'g) solicitar e retirar segunda via de CRV e CRLV junto à Divisão de Trânsito;',
-        'h) em relação as multas e/ou outras pendências que envolvam valores anteriores à data da venda do veículo para o outorgado, o outorgado resguarda-se o direito de efetuar os devidos pagamentos e proceder com a cobrança em relação ao outorgante, de forma administrativa e/ou judicial;',
-        'i) para os atos posteriores e de interesse exclusivo do outorgado, o mesmo compromete-se a assumir todos os encargos daí decorrentes;',
-        'j) por fim, o outorgado poderá praticar os atos, por mais especiais que sejam, que se façam necessários ou úteis ao fiel desempenho deste mandato.'
-    ];
-    
-    doc.setFontSize(9);
-    for (const item of itens) {
-        doc.text(item, m, y, { maxWidth: w, align: 'justify' });
-        y += doc.getTextDimensions(item, { maxWidth: w }).h + 3;
-    }
-    
-    y += 10;
-    doc.setFontSize(10);
-    doc.text('CIDADE: ____________________, ESTADO: ____, ____ de __________ de ________.', 105, y, { align: 'center' });
-    y += 25;
-    
-    doc.line(70, y, 140, y);
-    y += 5;
-    doc.text('Outorgante', 105, y, { align: 'center' });
-    
-    doc.save(`PROCURACAO_RECEBIMENTO_${placa || 'SEM_PLACA'}_${(nomeCompleto.split(' ')[0] || 'CLIENTE')}.pdf`);
-    mostrarStatus('PDF da Procuração de Recebimento gerado com sucesso!', 'success');
+  const dados = obterDadosRecebimento();
+
+  if (!dados.nomeCompleto || !dados.placa) {
+    mostrarStatus('Para a Procuração de Recebimento, preencha pelo menos o nome do cliente e a placa do veículo.', 'error');
+    return;
+  }
+
+  // ======== FORMATAÇÃO (COPIADA DO ANTIGO) PARA CABER EM 1 PÁGINA ========
+  const doc = createDocA4();
+
+  let {
+    nomeCompleto, cpfCnpj, endereco, bairro, cidade, estado,
+    modelo, placa, anoModelo, chassi, cor
+  } = dados;
+
+  anoModelo = formatarAnoModelo(anoModelo);
+
+  // Título
+  doc.setFont('times', 'bold');
+  doc.setFontSize(14);
+  doc.text('PROCURAÇÃO DE RECEBIMENTO DO USADO', PDF_LAYOUT.pageWidth / 2, 20, { align: 'center' });
+
+  // Corpo (compacto)
+  doc.setFont('times', 'normal');
+  doc.setFontSize(10);
+  doc.setLineHeightFactor(1.3);
+
+  const m = 20, w = 170;
+  let y = 35;
+
+  // Outorgante
+  const outorgante = `Outorgante: ${upperOr(nomeCompleto, 'NÃO INFORMADO')} inscrito no CPF/CNPJ sob o nº ${cpfCnpj || 'NÃO INFORMADO'} com endereço ${upperOr(endereco, 'NÃO INFORMADO')} Bairro: ${upperOr(bairro, 'NÃO INFORMADO')} na cidade de ${upperOr(cidade, 'NÃO INFORMADO')} Estado: ${upperOr(estado, 'NÃO INFORMADO')}.`;
+  doc.text(outorgante, m, y, { maxWidth: w, align: 'justify' });
+  y += doc.getTextDimensions(outorgante, { maxWidth: w }).h + 8;
+
+  // Outorgado
+  const outorgado = 'Outorgado: San Marino Veículos Ltda., situada na Av. Ipiranga, 7110, Bairro Jardim Botânico, na cidade Porto Alegre, Estado Rio Grande do Sul, inscrita no CNPJ sob n.º 90.446.618/0001-72 e inscrição estadual n.º 0960799613.';
+  doc.text(outorgado, m, y, { maxWidth: w, align: 'justify' });
+  y += doc.getTextDimensions(outorgado, { maxWidth: w }).h + 8;
+
+  // Objeto
+  doc.text('Objeto: O objeto desta procuração é o veículo abaixo descrito:', m, y);
+  y += 12;
+
+  // Dados do veículo
+  doc.setFont('times', 'bold');
+  doc.text(`MODELO DO VEÍCULO: ${upperOr(modelo, 'NÃO INFORMADO')}`, m, y); y += 6;
+  doc.text(`PLACA: ${upperOr(placa, 'SEM PLACA')}`, m, y); y += 6;
+  doc.text(`ANO/MODELO: ${anoModelo || 'NÃO INFORMADO'}`, m, y); y += 6;
+  doc.text(`CHASSI: ${upperOr(chassi, 'NÃO INFORMADO')}`, m, y); y += 6;
+  doc.text(`COR: ${upperOr(cor, 'NÃO INFORMADO')}.`, m, y); y += 10;
+
+  doc.setFont('times', 'normal');
+
+  // Poderes
+  const poderes = 'Poderes: O Outorgante, nomeia e constitui seu procurador, o OUTORGADO, para o fim especial de:';
+  doc.text(poderes, m, y, { maxWidth: w });
+  y += doc.getTextDimensions(poderes, { maxWidth: w }).h + 6;
+
+  const itens = [
+    'a) permutar, vender sem prestar contas e a quem melhor interessar, fazer dação em pagamento, aceitar e instituir cláusulas seguidas das demais formalidades relativas a venda do veículo de propriedade do outorgante, acima descrito;',
+    'b) receber valores, no todo ou em parcelas, dar e receber quitação, ceder e transigir, desistir, firmar acordo ou compromisso;',
+    'c) requerer documentos e/ou informações perante repartições e registros públicos;',
+    'd) efetuar qualquer espécie de procedimento ou de processo administrativo relativo ao veículo junto à Divisão de Trânsito;',
+    'e) proceder a liquidação das despesas do mesmo no que se refere às multas, transferência de propriedade tanto para terceiro quanto em favor do outorgado;',
+    'f) o outorgante, nos casos em que o veículo estiver pendente de quitação na modalidade de leasing junto a instituição financeira, concede os poderes especiais para o outorgado assinar e representa-lo como comprador perante a esta instituição financeira e ao Detran e, posteriormente, na qualidade de vendedor a quem ao outorgado interessar;',
+    'g) solicitar e retirar segunda via de CRV e CRLV junto à Divisão de Trânsito;',
+    'h) em relação as multas e/ou outras pendências que envolvam valores anteriores à data da venda do veículo para o outorgado, o outorgado resguarda-se o direito de efetuar os devidos pagamentos e proceder com a cobrança em relação ao outorgante, de forma administrativa e/ou judicial;',
+    'i) para os atos posteriores e de interesse exclusivo do outorgado, o mesmo compromete-se a assumir todos os encargos daí decorrentes;',
+    'j) por fim, o outorgado poderá praticar os atos, por mais especiais que sejam, que se façam necessários ou úteis ao fiel desempenho deste mandato.'
+  ];
+
+  // Itens (mais compactos, como no ANTIGO)
+  doc.setFontSize(9);
+  for (const item of itens) {
+    doc.text(item, m, y, { maxWidth: w, align: 'justify' });
+    y += doc.getTextDimensions(item, { maxWidth: w }).h + 3;
+  }
+
+  // Local/Data + assinatura (sem quebra de página)
+  y += 10;
+  doc.setFontSize(10);
+  doc.text('CIDADE: ____________________, ESTADO: ____, ____ de __________ de ________.', PDF_LAYOUT.pageWidth / 2, y, { align: 'center' });
+  y += 25;
+
+  doc.line(70, y, 140, y);
+  y += 5;
+  doc.text('Outorgante', PDF_LAYOUT.pageWidth / 2, y, { align: 'center' });
+
+  doc.save(buildFilename('PROCURACAO_RECEBIMENTO', placa, nomeCompleto));
+  mostrarStatus('PDF da Procuração de Recebimento gerado com sucesso!', 'success');
 }
 
 function gerarDeclaracaoResidencia() {
-    const dados = obterDados();
-    
-    if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.endereco) {
-        mostrarStatus('Para a Declaração de Residência, preencha pelo menos o nome completo, CPF e endereço.', 'error');
-        return;
-    }
-    
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-    let { nomeCompleto, cpfCnpj, endereco, bairro, cidade, estado } = dados;
-    
-    doc.setFont('times', 'bold');
-    doc.setFontSize(16);
-    doc.text('Declaração de Residência', 105, 30, { align: 'center' });
-    
-    doc.setFont('times', 'normal');
-    doc.setFontSize(12);
-    const m = 25, w = 160;
-    let y = 60;
-    
-    const texto = `Eu, ${nomeCompleto.toUpperCase()}, CPF: ${cpfCnpj}, declaro sob as penas da lei que resido à ${endereco.toUpperCase()}, Bairro: ${bairro.toUpperCase() || 'NÃO INFORMADO'}, Cidade: ${cidade.toUpperCase() || 'NÃO INFORMADO'}, Estado: ${estado.toUpperCase() || 'NÃO INFORMADO'}.`;
-    
-    doc.setLineHeightFactor(1.6);
-    doc.text(texto, m, y, { maxWidth: w, align: 'justify' });
-    y += doc.getTextDimensions(texto, { maxWidth: w }).h + 20;
-    
-    const texto2 = 'Declaro-me ainda, Civil e Criminalmente responsável pela veracidade da declaração prestada.';
-    doc.text(texto2, m, y, { maxWidth: w, align: 'justify' });
-    y += doc.getTextDimensions(texto2, { maxWidth: w }).h + 40;
-    
-    doc.text(`${cidade.toUpperCase() || '__________________'}, ______ DE ____________________ 20_______`, 105, y, { align: 'center' });
-    y += 40;
-    
-    doc.line(50, y, 160, y);
-    y += 5;
-    doc.text('Assinatura conforme documento apresentado', 105, y, { align: 'center' });
-    
-    doc.save(`DECLARACAO_RESIDENCIA_${(nomeCompleto.split(' ')[0] || 'CLIENTE')}.pdf`);
-    mostrarStatus('PDF da Declaração de Residência gerado com sucesso!', 'success');
+  const dados = obterDadosResidencia();
+
+  if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.endereco) {
+    mostrarStatus('Para a Declaração de Residência, preencha pelo menos o nome completo, CPF e endereço.', 'error');
+    return;
+  }
+
+  const doc = createDocA4();
+  const x = PDF_LAYOUT.marginLeft;
+  const w = contentWidth();
+
+  let { nomeCompleto, cpfCnpj, endereco, bairro, cidade, estado } = dados;
+
+  let y = addTitle(doc, 'Declaração de Residência', null);
+
+  const p1 = `Eu, ${upperOr(nomeCompleto, '')}, CPF: ${cpfCnpj}, declaro sob as penas da lei que resido à ${upperOr(endereco, '')}, Bairro: ${upperOr(bairro, 'NÃO INFORMADO')}, Cidade: ${upperOr(cidade, 'NÃO INFORMADO')}, Estado: ${upperOr(estado, 'NÃO INFORMADO')}.`;
+  y = drawJustifiedParagraph(doc, p1, x, y, w, PDF_LAYOUT.firstLineIndent);
+  y += PDF_LAYOUT.paragraphGap;
+
+  const p2 = 'Declaro-me ainda, Civil e Criminalmente responsável pela veracidade da declaração prestada.';
+  y = drawJustifiedParagraph(doc, p2, x, y, w, PDF_LAYOUT.firstLineIndent);
+  y += 12;
+
+  y = ensureSpace(doc, y, 18);
+  doc.text(`${upperOr(cidade, '____________________')}, ______ DE ____________________ 20_______`, PDF_LAYOUT.pageWidth / 2, y, { align: 'center' });
+  y += 20;
+
+  y = addAssinaturaSimples(doc, y, 'Assinatura conforme documento apresentado');
+
+  doc.save(buildFilename('DECLARACAO_RESIDENCIA', '', nomeCompleto));
+  mostrarStatus('PDF da Declaração de Residência gerado com sucesso!', 'success');
 }
-</script>
+
+function gerarDeclaracaoDepositoTerceiros() {
+  const dados = obterDadosDepositoTerceiros();
+
+  if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.valor) {
+    mostrarStatus('Para a Declaração de Depósito, preencha pelo menos: nome completo, CPF/CNPJ e valor do depósito.', 'error');
+    return;
+  }
+
+  const doc = createDocA4();
+  const x = PDF_LAYOUT.marginLeft;
+  const w = contentWidth();
+
+  const nomeCompleto = dados.nomeCompleto;
+  const cpfCnpj = dados.cpfCnpj;
+  const rg = dados.rg || '_______________';
+
+  const nValor = parseCurrencyToNumberBR(dados.valor);
+  const valorFmt = Number.isFinite(nValor) ? formatBRL(nValor) : (dados.valor || '________________');
+  const valorExt = dados.valorExtenso ? dados.valorExtenso : '________________';
+
+  const banco = upperOr(dados.banco, 'ITAU');
+  const agencia = dados.agencia || '0280';
+  const conta = dados.conta || '00110-8';
+  const dataDeposito = (dados.dataDeposito && dados.dataDeposito.includes('/')) ? dados.dataDeposito : (dados.dataDeposito || '____/____/________');
+
+  const chassiPlaca = dados.chassiPlaca ? dados.chassiPlaca : '______________________________';
+  const faturadoNome = dados.faturadoNome ? dados.faturadoNome : '______________________________________';
+  const faturadoCpfCnpj = dados.faturadoCpfCnpj ? dados.faturadoCpfCnpj : '____________________________';
+
+  const cidadeLinha = upperOr(dados.cidade, 'Porto Alegre');
+  const diaLinha = dados.dia ? dados.dia : '_______';
+  const mesLinha = dados.mesExtenso ? dados.mesExtenso : '________________________';
+  const anoLinha = dados.ano ? dados.ano : '2025';
+
+  let y = addTitle(doc, 'Declaração de Depósito', 'Para Terceiros');
+
+  // Linha local/data (modelo do arquivo ODT)
+  y = ensureSpace(doc, y, 12);
+  doc.setFont('times', 'normal');
+  doc.setFontSize(12);
+  doc.text(`${cidadeLinha}, ${diaLinha} de ${mesLinha} de ${anoLinha}.`, x, y);
+  y += 14;
+
+  const texto = `Eu, ${upperOr(nomeCompleto, '')}, portador (a) do CPF/CNPJ.: ${cpfCnpj || '___________________'} RG.: ${rg}, declaro que fiz um depósito no valor de ${valorFmt} (${valorExt}) na conta da San Marino Veículos Ltda no banco ${banco}, AGÊNCIA: ${agencia} CONTA CORRENTE: ${conta} em ${dataDeposito} para pagamento parcial ou total de um veículo chassi/placa.: ${chassiPlaca} que está sendo faturado em nome de ${faturadoNome}, CPF/CNPJ.: ${faturadoCpfCnpj}.`;
+
+  y = drawJustifiedParagraph(doc, texto, x, y, w, PDF_LAYOUT.firstLineIndent);
+  y += 18;
+
+  y = addAssinaturaSimples(doc, y, 'Assinatura');
+
+  // usa chassi/placa no nome do arquivo (se informado)
+  const placaParaNome = dados.chassiPlaca || '';
+  doc.save(buildFilename('DECLARACAO_DEPOSITO_TERCEIROS', placaParaNome, nomeCompleto));
+  mostrarStatus('PDF da Declaração de Depósito para Terceiros gerado com sucesso!', 'success');
+}
+
+function gerarInstrumentoResponsabilidade() {
+  const dados = obterDadosInstrumento();
+
+  if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.chassi || !dados.modelo) {
+    mostrarStatus('Para o Instrumento de Responsabilidade, preencha pelo menos: nome, CPF/CNPJ, modelo e chassi do veículo.', 'error');
+    return;
+  }
+
+  const doc = createDocA4();
+  const x = PDF_LAYOUT.marginLeft;
+  const w = contentWidth();
+
+  let { nomeCompleto, cpfCnpj, cidade, modelo, chassi, dataEntrega, horaEntrega, placa } = dados;
+
+  let y = addTitle(doc, 'Instrumento Particular de Responsabilidade', 'Civil e Criminal por Entrega de Veículo');
+
+  const dataTxt = (dataEntrega && dataEntrega.includes('/')) ? dataEntrega : (dataEntrega ? dataEntrega : '____________________');
+  const horaTxt = (horaEntrega && horaEntrega.includes(':')) ? horaEntrega : (horaEntrega ? horaEntrega : '____________');
+
+  const p1 = `Declaramos que o veículo ${upperOr(modelo, '')}, chassi ${upperOr(chassi, '')}, de propriedade de ${upperOr(nomeCompleto, '')}, CPF/CNPJ ${cpfCnpj || ''}, foi entregue a este estabelecimento em ${dataTxt}, às ${horaTxt}, ficando a San Marino Veículos Ltda. responsável civil e criminalmente por este veículo a contar desta data.`;
+  y = drawJustifiedParagraph(doc, p1, x, y, w, PDF_LAYOUT.firstLineIndent);
+  y += 18;
+
+  // Adiciona a linha com cidade e espaços para data.
+  y = addLocalDataLinha(doc, y, cidade);
+  // Aumenta o espaçamento antes das assinaturas para que fiquem mais abaixo na folha.
+  y += 15;
+  // Desenha as duas linhas de assinatura (cliente e concessionária).
+  y = addAssinaturasDuplas(doc, y, 'Assinatura do cliente', 'Assinatura da concessionária');
+
+  doc.save(buildFilename('RESPONSABILIDADE_ENTREGA', placa, nomeCompleto));
+  mostrarStatus('PDF do Instrumento de Responsabilidade gerado com sucesso!', 'success');
+}
+
+function gerarTermoQuitacaoTerceiro() {
+  const dados = obterDadosQuitacao();
+
+  if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.modelo || !dados.placa || !dados.chassi) {
+    mostrarStatus('Para o Termo de Quitação, preencha pelo menos: dados do cliente (nome/CPF) e do veículo entregue (modelo/placa/chassi).', 'error');
+    return;
+  }
+
+  const doc = createDocA4();
+  const x = PDF_LAYOUT.marginLeft;
+  const w = contentWidth();
+
+  let {
+    nomeCompleto, cpfCnpj, cidade,
+    modelo, anoModelo, placa, chassi, cor,
+    cedenteNome, cedenteCpfCnpj, cedenteEndereco, cedenteNumero,
+    veiculoAdquiridoModelo, veiculoAdquiridoAnoModelo, veiculoAdquiridoCor, veiculoAdquiridoChassi,
+    contratoNumero, valorQuitacao
+  } = dados;
+
+  anoModelo = formatarAnoModelo(anoModelo);
+  veiculoAdquiridoAnoModelo = formatarAnoModelo(veiculoAdquiridoAnoModelo);
+
+  const cedNome = cedenteNome ? cedenteNome : '_______________________________________________';
+  const cedCpf = cedenteCpfCnpj ? cedenteCpfCnpj : '___________________________';
+  const cedEnd = cedenteEndereco ? cedenteEndereco : '______________________________________';
+  const cedNum = cedenteNumero ? cedenteNumero : '__________';
+
+  const vEntModelo = modelo ? modelo : '______________________________';
+  const vEntAno = anoModelo ? anoModelo : '_________';
+  const vEntPlaca = placa ? placa.toUpperCase() : '______';
+  const vEntChassi = chassi ? chassi.toUpperCase() : '______________________________';
+  const vEntCor = cor ? cor.toUpperCase() : '__________________';
+
+  const vAdqModelo = veiculoAdquiridoModelo ? veiculoAdquiridoModelo : '______________________________';
+  const vAdqAno = veiculoAdquiridoAnoModelo ? veiculoAdquiridoAnoModelo : '_________';
+  const vAdqCor = veiculoAdquiridoCor ? veiculoAdquiridoCor.toUpperCase() : '________';
+  const vAdqChassi = veiculoAdquiridoChassi ? veiculoAdquiridoChassi.toUpperCase() : '____________________________';
+  const cNum = contratoNumero ? contratoNumero : '___________';
+
+  const nValor = parseCurrencyToNumberBR(valorQuitacao);
+  const valQuit = Number.isFinite(nValor) ? formatBRL(nValor) : '________________';
+
+  const anuNome = nomeCompleto ? nomeCompleto : '_______________________________________________';
+  const anuCpf = cpfCnpj ? cpfCnpj : '_____________________';
+  const anuCidade = cidade ? cidade : '_______';
+
+  let y = addTitle(
+    doc,
+    'Termo de Quitação',
+    'Instrumento particular de quitação de entrega de veículo como parte de pagamento em negócio de terceiros'
+  );
+
+  const texto = `Eu, ${cedNome}, CPF/CNPJ ${cedCpf}, residente e domiciliado na Rua ${cedEnd}, nº ${cedNum}, declaro que o veículo ${vEntModelo}, ano/modelo ${vEntAno}, placa ${vEntPlaca}, chassi ${vEntChassi}, cor ${vEntCor}, está livre e desembaraçado de qualquer ônus e através deste instrumento, dou quitação total do pagamento pelo valor de ${valQuit}, que serve como entrada para aquisição do automóvel ${vAdqModelo}, ano/modelo ${vAdqAno}, cor ${vAdqCor}, chassi ${vAdqChassi}, contrato nº ${cNum}, feito na San Marino Veículos Ltda., em nome de ${anuNome}, CPF/CNPJ ${anuCpf}, residente e domiciliado em ${anuCidade}. Assim, declaro não ter mais nada a reconsiderar ou exigir na presente transação.`;
+
+  y = drawJustifiedParagraph(doc, texto, x, y, w, PDF_LAYOUT.firstLineIndent);
+  y += 16;
+
+  y = ensureSpace(doc, y, 18);
+  doc.text('Porto Alegre, ______ de ____________________ de ________.', PDF_LAYOUT.pageWidth / 2, y, { align: 'center' });
+  y += 18;
+
+  y = addAssinaturasDuplas(doc, y, '(Cedente do veículo)', '(Anuente – cliente conforme o Contrato)');
+
+  y = ensureSpace(doc, y, 22);
+  doc.setFontSize(10);
+  doc.text('Nome: ____________________________', PDF_LAYOUT.marginLeft, y);
+  doc.text('Nome: ____________________________', PDF_LAYOUT.pageWidth / 2 + 5, y);
+  y += 7;
+  doc.text('CPF: _____________________________', PDF_LAYOUT.marginLeft, y);
+  doc.text('CPF: _____________________________', PDF_LAYOUT.pageWidth / 2 + 5, y);
+  y += 14;
+
+  // Espaçamento extra entre as assinaturas e a seção de testemunhas.
+  y += 15;
+
+  y = ensureSpace(doc, y, 26);
+  doc.setFontSize(11);
+  doc.text('Testemunhas:', PDF_LAYOUT.marginLeft, y);
+  y += 9;
+  doc.text('1) _______________________________', PDF_LAYOUT.marginLeft, y);
+  y += 7;
+  doc.text('2) _______________________________', PDF_LAYOUT.marginLeft, y);
+
+  doc.save(buildFilename('TERMO_QUITACAO_TERCEIRO', placa, nomeCompleto));
+  mostrarStatus('PDF do Termo de Quitação gerado com sucesso!', 'success');
+}
+
+/* =========================
+   Inicialização
+   ========================= */
+window.addEventListener('DOMContentLoaded', () => {
+  applyDateMask(document.getElementById('inst_dataEntrega'));
+  applyTimeMask(document.getElementById('inst_horaEntrega'));
+  attachCurrencyBehavior(document.getElementById('quit_valorQuitacao'));
+  applyDateMask(document.getElementById('dep_dataDeposito'));
+  attachCurrencyBehavior(document.getElementById('dep_valor'));
+});
+
+
+/* =========================
+   Inicialização de máscaras
+   ========================= */
+document.addEventListener('DOMContentLoaded', () => {
+  // Datas/Horas já existentes
+  applyDateMask(document.getElementById('inst_dataEntrega'));
+  applyTimeMask(document.getElementById('inst_horaEntrega'));
+  applyDateMask(document.getElementById('dep_dataDeposito'));
+
+  // Ano/Modelo com barra automática
+  applyAnoModeloMask(document.getElementById('acordo_anoModelo'));
+  applyAnoModeloMask(document.getElementById('rec_anoModelo'));
+  applyAnoModeloMask(document.getElementById('quit_anoModelo'));
+  applyAnoModeloMask(document.getElementById('quit_veiculoAdquiridoAnoModelo'));
+  applyAnoModeloMask(document.getElementById('dep_ano'));
+});</script>
 </body>
 </html>
-
