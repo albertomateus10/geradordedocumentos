@@ -416,6 +416,46 @@
     <!-- =========================
          ÁREA DOS DOCUMENTOS (ocultos até clicar)
          ========================= -->
+    
+    <!-- =========================
+         DADOS GLOBAIS DO CLIENTE
+         ========================= -->
+    <div class="cover" style="margin-top: 20px;">
+      <div class="section-title" style="border-top: none; margin-top: 0; padding-top: 0; font-size: 16px; margin-bottom: 15px;">
+        👤 DADOS DO CLIENTE (Preencha uma vez para todos os documentos)
+      </div>
+      <div class="form-grid">
+        <div class="form-item">
+          <label for="global_nomeCompleto">Nome Completo</label>
+          <input type="text" id="global_nomeCompleto" placeholder="Nome completo do cliente" oninput="replicarDadosCliente()">
+        </div>
+        <div class="form-item">
+          <label for="global_cpfCnpj">CPF/CNPJ</label>
+          <input type="text" id="global_cpfCnpj" placeholder="000.000.000-00" oninput="replicarDadosCliente()">
+        </div>
+        <div class="form-item">
+          <label for="global_endereco">Endereço</label>
+          <input type="text" id="global_endereco" placeholder="Rua/av, número, complemento" oninput="replicarDadosCliente()">
+        </div>
+        <div class="form-item">
+          <label for="global_bairro">Bairro</label>
+          <input type="text" id="global_bairro" placeholder="Nome do bairro" oninput="replicarDadosCliente()">
+        </div>
+        <div class="form-item">
+          <label for="global_cep">CEP</label>
+          <input type="text" id="global_cep" placeholder="00000-000" oninput="replicarDadosCliente()">
+        </div>
+        <div class="form-item">
+          <label for="global_cidade">Cidade</label>
+          <input type="text" id="global_cidade" placeholder="Nome da cidade" oninput="replicarDadosCliente()">
+        </div>
+        <div class="form-item">
+          <label for="global_estado">Estado</label>
+          <input type="text" id="global_estado" placeholder="Sigla do Estado" oninput="replicarDadosCliente()">
+        </div>
+      </div>
+    </div>
+
     <div class="doc-area" id="docArea">
 
       <!-- =========================
@@ -694,8 +734,8 @@
             <input type="text" id="inst_modelo" placeholder="Ex: FIAT/FASTBACK">
           </div>
           <div class="form-item">
-            <label for="inst_chassi">Chassi</label>
-            <input type="text" id="inst_chassi" placeholder="17 caracteres">
+            <label for="inst_chassi">Placa</label>
+            <input type="text" id="inst_chassi" placeholder="JDO1234">
           </div>
         </div>
 
@@ -777,10 +817,7 @@
             <label for="dep_cpfCnpj">CPF/CNPJ</label>
             <input type="text" id="dep_cpfCnpj" placeholder="000.000.000-00">
           </div>
-          <div class="form-item">
-            <label for="dep_rg">RG</label>
-            <input type="text" id="dep_rg" placeholder="RG do declarante">
-          </div>
+
         </div>
 
         <div class="section-title">Dados do Depósito</div>
@@ -864,6 +901,34 @@
   </div>
 
 <script>
+
+function replicarDadosCliente() {
+  const campos = {
+    nomeCompleto: document.getElementById('global_nomeCompleto').value,
+    cpfCnpj: document.getElementById('global_cpfCnpj').value,
+    endereco: document.getElementById('global_endereco').value,
+    bairro: document.getElementById('global_bairro').value,
+    cep: document.getElementById('global_cep').value,
+    cidade: document.getElementById('global_cidade').value,
+    estado: document.getElementById('global_estado').value
+  };
+
+  // Mapeamento de campos globais para campos locais
+  const mapa = {
+    'acordo_nomeCompleto': campos.nomeCompleto, 'acordo_cpfCnpj': campos.cpfCnpj, 'acordo_endereco': campos.endereco, 'acordo_bairro': campos.bairro, 'acordo_cep': campos.cep, 'acordo_cidade': campos.cidade, 'acordo_estado': campos.estado,
+    'rec_nomeCompleto': campos.nomeCompleto, 'rec_cpfCnpj': campos.cpfCnpj, 'rec_endereco': campos.endereco, 'rec_bairro': campos.bairro, 'rec_cidade': campos.cidade, 'rec_estado': campos.estado,
+    'quit_nomeCompleto': campos.nomeCompleto, 'quit_cpfCnpj': campos.cpfCnpj, 'quit_cidade': campos.cidade,
+    'res_nomeCompleto': campos.nomeCompleto, 'res_cpfCnpj': campos.cpfCnpj, 'res_endereco': campos.endereco, 'res_bairro': campos.bairro, 'res_cidade': campos.cidade, 'res_estado': campos.estado,
+    'dep_nomeCompleto': campos.nomeCompleto, 'dep_cpfCnpj': campos.cpfCnpj, 'dep_cidade': campos.cidade,
+    'inst_nomeCompleto': campos.nomeCompleto, 'inst_cpfCnpj': campos.cpfCnpj, 'inst_cidade': campos.cidade
+  };
+
+  for (let id in mapa) {
+    const el = document.getElementById(id);
+    if (el) el.value = mapa[id];
+  }
+}
+
 /* =========================
    CAPA (abre 1 documento por vez)
    ========================= */
@@ -1058,7 +1123,7 @@ function obterDadosDepositoTerceiros() {
   return {
     nomeCompleto: document.getElementById('dep_nomeCompleto').value.trim(),
     cpfCnpj: document.getElementById('dep_cpfCnpj').value.trim(),
-    rg: document.getElementById('dep_rg').value.trim(),
+    rg: (document.getElementById('dep_rg')?.value || '').trim(),
 
     valor: document.getElementById('dep_valor').value.trim(),
     valorExtenso: document.getElementById('dep_valorExtenso').value.trim(),
@@ -1128,11 +1193,21 @@ const PDF_LAYOUT = {
   pageHeight: 297,
   marginLeft: 25,
   marginRight: 25,
-  marginTop: 25,
+  marginTop: 40,
   marginBottom: 25,
   firstLineIndent: 10,
   paragraphGap: 6
 };
+
+// ==============================
+// Logomarca da San Marino
+//
+// Esta constante armazena a imagem da logo em formato
+// base64 (data URI). Ela é utilizada para adicionar a logo
+// no canto superior esquerdo de todos os PDFs gerados.
+// A imagem original foi redimensionada para reduzir o
+// tamanho do arquivo incorporado.
+const SAN_MARINO_LOGO = 'data:image/jpeg;base64,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';
 
 function createDocA4() {
   const { jsPDF } = window.jspdf;
@@ -1140,6 +1215,10 @@ function createDocA4() {
   doc.setFont('times', 'normal');
   doc.setFontSize(12);
   doc.setLineHeightFactor(1.6);
+  // Insere a logomarca da San Marino no canto superior esquerdo
+  // Largura de 25mm e altura de 18mm para manter a proporção, com 5mm de margem superior
+  // A imagem é obtida da constante SAN_MARINO_LOGO definida acima
+  doc.addImage(SAN_MARINO_LOGO, 'JPEG', PDF_LAYOUT.marginLeft, 5, 25, 18);
   return doc;
 }
 
@@ -1481,7 +1560,7 @@ function gerarProcuracaoRecebimento() {
   // Título
   doc.setFont('times', 'bold');
   doc.setFontSize(14);
-  doc.text('PROCURAÇÃO DE RECEBIMENTO DO USADO', PDF_LAYOUT.pageWidth / 2, 20, { align: 'center' });
+  doc.text('PROCURAÇÃO DE RECEBIMENTO DO USADO', PDF_LAYOUT.pageWidth / 2, PDF_LAYOUT.marginTop, { align: 'center' });
 
   // Corpo (compacto)
   doc.setFont('times', 'normal');
@@ -1489,21 +1568,21 @@ function gerarProcuracaoRecebimento() {
   doc.setLineHeightFactor(1.3);
 
   const m = 20, w = 170;
-  let y = 35;
+  let y = PDF_LAYOUT.marginTop + 10;
 
   // Outorgante
-  const outorgante = `Outorgante: ${upperOr(nomeCompleto, 'NÃO INFORMADO')} inscrito no CPF/CNPJ sob o nº ${cpfCnpj || 'NÃO INFORMADO'} com endereço ${upperOr(endereco, 'NÃO INFORMADO')} Bairro: ${upperOr(bairro, 'NÃO INFORMADO')} na cidade de ${upperOr(cidade, 'NÃO INFORMADO')} Estado: ${upperOr(estado, 'NÃO INFORMADO')}.`;
+  const outorgante = `Outorgante: ${upperOr(nomeCompleto, 'NÃO INFORMADO')} inscrito no CPF/CNPJ sob o nº ${cpfCnpj || 'NÃO INFORMADO'} com endereço: ${upperOr(endereco, 'NÃO INFORMADO')} Bairro: ${upperOr(bairro, 'NÃO INFORMADO')} na cidade de ${upperOr(cidade, 'NÃO INFORMADO')} Estado: ${upperOr(estado, 'NÃO INFORMADO')}.`;
   doc.text(outorgante, m, y, { maxWidth: w, align: 'justify' });
-  y += doc.getTextDimensions(outorgante, { maxWidth: w }).h + 8;
+  y += doc.getTextDimensions(outorgante, { maxWidth: w }).h + 4;
 
   // Outorgado
   const outorgado = 'Outorgado: San Marino Veículos Ltda., situada na Av. Ipiranga, 7110, Bairro Jardim Botânico, na cidade Porto Alegre, Estado Rio Grande do Sul, inscrita no CNPJ sob n.º 90.446.618/0001-72 e inscrição estadual n.º 0960799613.';
   doc.text(outorgado, m, y, { maxWidth: w, align: 'justify' });
-  y += doc.getTextDimensions(outorgado, { maxWidth: w }).h + 8;
+  y += doc.getTextDimensions(outorgado, { maxWidth: w }).h + 6;
 
   // Objeto
   doc.text('Objeto: O objeto desta procuração é o veículo abaixo descrito:', m, y);
-  y += 12;
+  y += 9;
 
   // Dados do veículo
   doc.setFont('times', 'bold');
@@ -1511,7 +1590,7 @@ function gerarProcuracaoRecebimento() {
   doc.text(`PLACA: ${upperOr(placa, 'SEM PLACA')}`, m, y); y += 6;
   doc.text(`ANO/MODELO: ${anoModelo || 'NÃO INFORMADO'}`, m, y); y += 6;
   doc.text(`CHASSI: ${upperOr(chassi, 'NÃO INFORMADO')}`, m, y); y += 6;
-  doc.text(`COR: ${upperOr(cor, 'NÃO INFORMADO')}.`, m, y); y += 10;
+  doc.text(`COR: ${upperOr(cor, 'NÃO INFORMADO')}`, m, y); y += 10;
 
   doc.setFont('times', 'normal');
 
@@ -1537,14 +1616,14 @@ function gerarProcuracaoRecebimento() {
   doc.setFontSize(9);
   for (const item of itens) {
     doc.text(item, m, y, { maxWidth: w, align: 'justify' });
-    y += doc.getTextDimensions(item, { maxWidth: w }).h + 3;
+    y += doc.getTextDimensions(item, { maxWidth: w }).h + 2;
   }
 
   // Local/Data + assinatura (sem quebra de página)
-  y += 10;
+  y += 8;
   doc.setFontSize(10);
   doc.text('CIDADE: ____________________, ESTADO: ____, ____ de __________ de ________.', PDF_LAYOUT.pageWidth / 2, y, { align: 'center' });
-  y += 25;
+  y += 22;
 
   doc.line(70, y, 140, y);
   y += 5;
@@ -1602,7 +1681,7 @@ function gerarDeclaracaoDepositoTerceiros() {
 
   const nomeCompleto = dados.nomeCompleto;
   const cpfCnpj = dados.cpfCnpj;
-  const rg = dados.rg || '_______________';
+  // const rg = dados.rg || '_______________';
 
   const nValor = parseCurrencyToNumberBR(dados.valor);
   const valorFmt = Number.isFinite(nValor) ? formatBRL(nValor) : (dados.valor || '________________');
@@ -1631,7 +1710,7 @@ function gerarDeclaracaoDepositoTerceiros() {
   doc.text(`${cidadeLinha}, ${diaLinha} de ${mesLinha} de ${anoLinha}.`, x, y);
   y += 14;
 
-  const texto = `Eu, ${upperOr(nomeCompleto, '')}, portador (a) do CPF/CNPJ.: ${cpfCnpj || '___________________'} RG.: ${rg}, declaro que fiz um depósito no valor de ${valorFmt} (${valorExt}) na conta da San Marino Veículos Ltda no banco ${banco}, AGÊNCIA: ${agencia} CONTA CORRENTE: ${conta} em ${dataDeposito} para pagamento parcial ou total de um veículo chassi/placa.: ${chassiPlaca} que está sendo faturado em nome de ${faturadoNome}, CPF/CNPJ.: ${faturadoCpfCnpj}.`;
+  const texto = `Eu, ${upperOr(nomeCompleto, '')}, portador (a) do CPF/CNPJ.: ${cpfCnpj || '___________________'}, declaro que fiz um depósito no valor de ${valorFmt} (${valorExt}) na conta da San Marino Veículos Ltda no banco ${banco}, AGÊNCIA: ${agencia} CONTA CORRENTE: ${conta} em ${dataDeposito} para pagamento parcial ou total de um veículo chassi/placa.: ${chassiPlaca} que está sendo faturado em nome de ${faturadoNome}, CPF/CNPJ.: ${faturadoCpfCnpj}.`;
 
   y = drawJustifiedParagraph(doc, texto, x, y, w, PDF_LAYOUT.firstLineIndent);
   y += 18;
@@ -1770,6 +1849,18 @@ function gerarTermoQuitacaoTerceiro() {
    Inicialização
    ========================= */
 window.addEventListener('DOMContentLoaded', () => {
+
+  // Ocultar seções de dados do cliente individuais que agora são globais
+  const labelsToHide = ['Dados do Cliente', 'Dados do Cliente (Anuente)'];
+  document.querySelectorAll('.section-title').forEach(el => {
+    if (labelsToHide.includes(el.textContent.trim())) {
+      el.style.display = 'none';
+      if (el.nextElementSibling && el.nextElementSibling.classList.contains('form-grid')) {
+        el.nextElementSibling.style.display = 'none';
+      }
+    }
+  });
+
   applyDateMask(document.getElementById('inst_dataEntrega'));
   applyTimeMask(document.getElementById('inst_horaEntrega'));
   attachCurrencyBehavior(document.getElementById('quit_valorQuitacao'));
