@@ -347,6 +347,7 @@
     }
 
     .form-item input {
+      text-transform: uppercase;
       padding: var(--input-pad-y) var(--input-pad-x);
       border: 1px solid rgba(209, 213, 219, 0.9);
       border-radius: 10px;
@@ -1064,13 +1065,13 @@
 
     function replicarDadosCliente() {
       const campos = {
-        nomeCompleto: document.getElementById('global_nomeCompleto').value,
-        cpfCnpj: document.getElementById('global_cpfCnpj').value,
-        endereco: document.getElementById('global_endereco').value,
-        bairro: document.getElementById('global_bairro').value,
-        cep: document.getElementById('global_cep').value,
-        cidade: document.getElementById('global_cidade').value,
-        estado: document.getElementById('global_estado').value
+        nomeCompleto: document.getElementById('global_nomeCompleto').value.toUpperCase(),
+        cpfCnpj: document.getElementById('global_cpfCnpj').value.toUpperCase(),
+        endereco: document.getElementById('global_endereco').value.toUpperCase(),
+        bairro: document.getElementById('global_bairro').value.toUpperCase(),
+        cep: document.getElementById('global_cep').value.toUpperCase(),
+        cidade: document.getElementById('global_cidade').value.toUpperCase(),
+        estado: document.getElementById('global_estado').value.toUpperCase()
       };
 
       // Mapeamento de campos globais para campos locais
@@ -2012,6 +2013,28 @@
        Inicialização
        ========================= */
     window.addEventListener('DOMContentLoaded', () => {
+
+      // Forçar maiúsculas em todos os campos de input
+      document.body.addEventListener('input', function (e) {
+        // Verifica se é input ou textarea
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+          // Tenta aplicar uppercase
+          const start = e.target.selectionStart;
+          const end = e.target.selectionEnd;
+          const original = e.target.value;
+          const upper = original.toUpperCase();
+
+          if (original !== upper) {
+            e.target.value = upper;
+            // Restaura cursor se suportado
+            try {
+              e.target.setSelectionRange(start, end);
+            } catch (err) {
+              // Alguns tipos de input nâo suportam selection (ex: number, email em alguns browsers), ignora
+            }
+          }
+        }
+      });
 
       // Ocultar seções de dados do cliente individuais que agora são globais
       const labelsToHide = ['Dados do Cliente', 'Dados do Cliente (Anuente)'];
