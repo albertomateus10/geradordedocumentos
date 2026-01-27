@@ -559,11 +559,17 @@
       width: 100%;
       font-size: 0.95rem;
       font-weight: 700;
-      color: #64748b;
+      color: #000;
       border: none;
       background: transparent;
       outline: none;
       text-transform: uppercase;
+    }
+
+    .orc-input::placeholder {
+      color: #94a3b8;
+      font-style: italic;
+      font-weight: 500;
     }
 
     .orc-table {
@@ -1293,20 +1299,20 @@
               <input type="text" class="orc-input" id="orc_loja" value="SAN MARINO VEÍCULOS" style="color: #000;">
             </div>
             <div class="orc-field">
-              <label class="orc-label">Veículo:</label>
-              <input type="text" class="orc-input" id="orc_veiculo" placeholder="Ex: TITANO RANCH">
+              <label class="orc-label">Data do Recibo:</label>
+              <input type="text" class="orc-input" id="orc_dataRecibo" style="color: #000;">
             </div>
             <div class="orc-field">
               <label class="orc-label">Placas/Chassis:</label>
-              <input type="text" class="orc-input" id="orc_placa">
+              <input type="text" class="orc-input" id="orc_placa" placeholder="Ex: JDO1234">
             </div>
             <div class="orc-field">
               <label class="orc-label">Ano/Modelo/Cor:</label>
               <input type="text" class="orc-input" id="orc_anoModeloCor" placeholder="Ex: 2025/2026">
             </div>
             <div class="orc-field">
-              <label class="orc-label">Data do Recibo:</label>
-              <input type="text" class="orc-input" id="orc_dataRecibo">
+              <label class="orc-label">Veículo:</label>
+              <input type="text" class="orc-input" id="orc_veiculo" placeholder="Ex: TITANO RANCH">
             </div>
             <div class="orc-field">
               <label class="orc-label">Proprietário:</label>
@@ -1336,12 +1342,12 @@
             <tbody id="orc-body">
               <tr>
                 <td>Honorários devidos ao despachante</td>
-                <td style="text-align: center;">S/N</td>
+                <td style="text-align: center;"></td>
                 <td style="text-align: right;" class="orc-price">150,00</td>
               </tr>
               <tr>
                 <td>Serviços Prestados pela Concessionária:</td>
-                <td style="text-align: center;">S/N</td>
+                <td style="text-align: center;"></td>
                 <td style="text-align: right;" class="orc-price">850,00</td>
               </tr>
               <tr>
@@ -1362,43 +1368,37 @@
                 <td>Taxa Vistoria – DETRAN/RS</td>
                 <td style="text-align: center;"><input type="checkbox" class="orc-check"
                     onchange="updateOrcamentoTotal()" checked></td>
-                <td style="text-align: right;" class="orc-price" contenteditable="true"
-                  oninput="updateOrcamentoTotal()">104,37</td>
+                <td style="text-align: right;" class="orc-price">104,37</td>
               </tr>
               <tr>
                 <td>Taxa de Expedição – CRLV</td>
                 <td style="text-align: center;"><input type="checkbox" class="orc-check"
                     onchange="updateOrcamentoTotal()" checked></td>
-                <td style="text-align: right;" class="orc-price" contenteditable="true"
-                  oninput="updateOrcamentoTotal()">288,00</td>
+                <td style="text-align: right;" class="orc-price">288,00</td>
               </tr>
               <tr>
                 <td>Escolha de Placa (Opcional ) – DETRAN/RS</td>
                 <td style="text-align: center;"><input type="checkbox" class="orc-check"
                     onchange="updateOrcamentoTotal()" checked></td>
-                <td style="text-align: right;" class="orc-price" contenteditable="true"
-                  oninput="updateOrcamentoTotal()">475,03</td>
+                <td style="text-align: right;" class="orc-price">475,03</td>
               </tr>
               <tr>
                 <td>Confecção Placa Metálica Oficial – Agente credenciado</td>
                 <td style="text-align: center;"><input type="checkbox" class="orc-check"
                     onchange="updateOrcamentoTotal()" checked></td>
-                <td style="text-align: right;" class="orc-price" contenteditable="true"
-                  oninput="updateOrcamentoTotal()">370,00</td>
+                <td style="text-align: right;" class="orc-price">370,00</td>
               </tr>
               <tr>
                 <td>Comunicação de Venda</td>
                 <td style="text-align: center;"><input type="checkbox" class="orc-check"
                     onchange="updateOrcamentoTotal()" checked></td>
-                <td style="text-align: right;" class="orc-price" contenteditable="true"
-                  oninput="updateOrcamentoTotal()">46,63</td>
+                <td style="text-align: right;" class="orc-price">46,63</td>
               </tr>
               <tr>
                 <td>Seguro Placa Verde</td>
                 <td style="text-align: center;"><input type="checkbox" class="orc-check"
                     onchange="updateOrcamentoTotal()" checked></td>
-                <td style="text-align: right;" class="orc-price" contenteditable="true"
-                  oninput="updateOrcamentoTotal()">20,00</td>
+                <td style="text-align: right;" class="orc-price">20,00</td>
               </tr>
               <tr>
                 <td>Cartório/Cópias</td>
@@ -1406,6 +1406,12 @@
                     onchange="updateOrcamentoTotal()"></td>
                 <td style="text-align: right;" class="orc-price" contenteditable="true"
                   oninput="updateOrcamentoTotal()">0,00</td>
+              </tr>
+              <tr style="background: #fdf2f2;">
+                <td style="font-weight: 900; color: #dc2626;">DESCONTO</td>
+                <td style="text-align: center;"></td>
+                <td style="text-align: right; color: #dc2626;" class="orc-price" contenteditable="true"
+                  id="orc_desconto" oninput="updateOrcamentoTotal()">0,00</td>
               </tr>
             </tbody>
           </table>
@@ -2495,10 +2501,23 @@
       rows.forEach(row => {
         const checkbox = row.querySelector('.orc-check');
         const priceCell = row.querySelector('.orc-price');
+        // Pula a linha de desconto no loop inicial de soma (ela será subtraída depois)
+        if (priceCell && priceCell.id === 'orc_desconto') return;
+
         if (!checkbox || checkbox.checked) {
           total += parseCurrencyToNumberBR(priceCell.innerText || priceCell.value || '0');
         }
       });
+
+      // Subtrai o desconto
+      const descontoEl = document.getElementById('orc_desconto');
+      if (descontoEl) {
+        const valorDesconto = parseCurrencyToNumberBR(descontoEl.innerText || descontoEl.value || '0');
+        if (Number.isFinite(valorDesconto)) {
+          total -= valorDesconto;
+        }
+      }
+
       const totalEl = document.getElementById('orc-total');
       if (totalEl) totalEl.innerText = formatBRL(total);
     }</script>
