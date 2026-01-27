@@ -624,7 +624,7 @@
     }
 
     .orc-sigs {
-      margin-top: 2.5rem;
+      margin-top: 5rem;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 2.5rem;
@@ -709,11 +709,15 @@
       .orc-card {
         border: none !important;
         padding: 0 !important;
-        margin: 0 !important;
+        margin: 0 auto !important;
+        transform: scale(0.93);
+        /* Reduced size to fit in one page */
+        transform-origin: top center;
       }
 
       @page {
         margin: 0.5cm;
+        /* Restored original margin to keep it on one page */
         size: a4;
       }
     }
