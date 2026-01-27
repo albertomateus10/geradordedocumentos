@@ -507,6 +507,210 @@
         padding: 9px 12px;
       }
     }
+
+    /* ===== ESTILOS ORÇAMENTO DETRAN (LUXURY) ===== */
+    .orc-card {
+      max-width: 950px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 1.5rem 2rem;
+      border: 1px solid #000;
+      border-radius: 4px;
+      color: #000;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .orc-header {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .orc-header h1 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+      border-bottom: 2px solid #000;
+      padding-bottom: 0.5rem;
+    }
+
+    .orc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.35rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .orc-field {
+      padding: 0.3rem 0.7rem;
+      border: 1.5px solid #000;
+      background: #fff;
+    }
+
+    .orc-label {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #444;
+      margin-bottom: 2px;
+    }
+
+    .orc-input {
+      width: 100%;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #64748b;
+      border: none;
+      background: transparent;
+      outline: none;
+      text-transform: uppercase;
+    }
+
+    .orc-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.6rem 0;
+      font-size: 0.8rem;
+    }
+
+    .orc-table th {
+      background: #f1f1f1;
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      border: 1px solid #000;
+      padding: 0.4rem;
+      text-align: left;
+    }
+
+    .orc-table td {
+      padding: 0.35rem 0.7rem;
+      border: 1px solid #000;
+      font-weight: 700;
+    }
+
+    .orc-total-box {
+      margin-top: 0.4rem;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 1.2rem;
+      padding: 0.7rem 1.2rem;
+      background: #000;
+      color: #fff;
+    }
+
+    .orc-total-amt {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #f59e0b;
+    }
+
+    .orc-legal {
+      margin-top: 0.6rem;
+      padding: 0.6rem;
+      border: 1px solid #000;
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-align: justify;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    .orc-sigs {
+      margin-top: 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      text-align: center;
+    }
+
+    .orc-sig-line {
+      border-top: 2px solid #000;
+      padding-top: 4px;
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .obs-placeholder:empty:before {
+      content: attr(placeholder);
+      color: #94a3b8;
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    @media print {
+
+      .no-print,
+      .container>h1,
+      .subtitle,
+      #cover,
+      .cover,
+      .head,
+      .footer,
+      .doc-actions,
+      .status {
+        display: none !important;
+      }
+
+      .orc-total-box {
+        background: transparent !important;
+        color: #000 !important;
+        border: 1px solid #000;
+        margin-top: 0.5rem;
+      }
+
+      .orc-total-amt {
+        color: #000 !important;
+      }
+
+      body {
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .container {
+        box-shadow: none !important;
+        border: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .doc-area {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .doc-card {
+        display: none !important;
+        /* Esconde todos os cards por padrão na impressão */
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
+
+      #doc-orcamento {
+        display: block !important;
+        /* Força a exibição apenas do card de orçamento */
+      }
+
+      .orc-card {
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      @page {
+        margin: 0.5cm;
+        size: a4;
+      }
+    }
   </style>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -558,6 +762,14 @@
         <button class="cover-btn" type="button" onclick="abrirDocumento('doc-deposito')">
           <div class="cover-left">
             <div class="cover-doc-pill cover-doc-dep">DECLARAÇÃO DE DEPÓSITO PARA TERCEIROS</div>
+          </div>
+        </button>
+
+        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-orcamento')">
+          <div class="cover-left">
+            <div class="cover-doc-pill"
+              style="color: #f59e0b; background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3);">
+              ORÇAMENTO DE DETRAN</div>
           </div>
         </button>
 
@@ -1056,6 +1268,173 @@
         </div>
       </div>
 
+      <!-- =========================
+           7) ORÇAMENTO DETRAN
+           ========================= -->
+      <div class="doc-card hidden" id="doc-orcamento">
+        <div class="head no-print">
+          <div class="doc-title-pill"
+            style="color: #f59e0b; background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3);">
+            ORÇAMENTO DETRAN</div>
+        </div>
+
+        <div class="orc-card" id="printable-orcamento">
+          <header class="orc-header">
+            <h1>ORÇAMENTO PARA TRANSFERÊNCIA OU EMPLACAMENTO DE VEÍCULOS</h1>
+          </header>
+
+          <div class="orc-grid">
+            <div class="orc-field">
+              <label class="orc-label">Despachante:</label>
+              <input type="text" class="orc-input" id="orc_despachante" value="RAMIRO ILHA" style="color: #000;">
+            </div>
+            <div class="orc-field">
+              <label class="orc-label">Loja:</label>
+              <input type="text" class="orc-input" id="orc_loja" value="SAN MARINO VEÍCULOS" style="color: #000;">
+            </div>
+            <div class="orc-field">
+              <label class="orc-label">Veículo:</label>
+              <input type="text" class="orc-input" id="orc_veiculo" placeholder="Ex: TITANO RANCH">
+            </div>
+            <div class="orc-field">
+              <label class="orc-label">Placas/Chassis:</label>
+              <input type="text" class="orc-input" id="orc_placa">
+            </div>
+            <div class="orc-field">
+              <label class="orc-label">Ano/Modelo/Cor:</label>
+              <input type="text" class="orc-input" id="orc_anoModeloCor" placeholder="Ex: 2025/2026">
+            </div>
+            <div class="orc-field">
+              <label class="orc-label">Data do Recibo:</label>
+              <input type="text" class="orc-input" id="orc_dataRecibo">
+            </div>
+            <div class="orc-field">
+              <label class="orc-label">Proprietário:</label>
+              <input type="text" class="orc-input" id="orc_proprietario">
+            </div>
+            <div class="orc-field">
+              <label class="orc-label">CPF/CNPJ:</label>
+              <input type="text" class="orc-input" id="orc_cpfCnpj">
+            </div>
+          </div>
+
+          <div style="margin: 0.5rem 0;">
+            <label class="orc-label">Observações:</label>
+            <div id="orc_obs" class="orc-field obs-placeholder" contenteditable="true"
+              style="min-height: 1.8rem; font-size: 0.75rem; font-weight: 900; background: #fbfbfb;"
+              placeholder="digite aqui as observações"></div>
+          </div>
+
+          <table class="orc-table">
+            <thead>
+              <tr>
+                <th>SERVIÇOS</th>
+                <th style="width: 70px; text-align: center;">SOMA?</th>
+                <th style="width: 140px; text-align: right;">VALORES (R$)</th>
+              </tr>
+            </thead>
+            <tbody id="orc-body">
+              <tr>
+                <td>Honorários devidos ao despachante</td>
+                <td style="text-align: center;">S/N</td>
+                <td style="text-align: right;" class="orc-price">150,00</td>
+              </tr>
+              <tr>
+                <td>Serviços Prestados pela Concessionária:</td>
+                <td style="text-align: center;">S/N</td>
+                <td style="text-align: right;" class="orc-price">850,00</td>
+              </tr>
+              <tr>
+                <td>IPVA/RS - Parcela Anual 2025</td>
+                <td style="text-align: center;"><input type="checkbox" class="orc-check"
+                    onchange="updateOrcamentoTotal()" checked></td>
+                <td style="text-align: right;" class="orc-price" contenteditable="true">2.624,80</td>
+              </tr>
+              <tr>
+                <td>Taxa de transferência de propriedade – DETRAN/RS</td>
+                <td style="text-align: center;"><input type="checkbox" class="orc-check"
+                    onchange="updateOrcamentoTotal()"></td>
+                <td style="text-align: right;" class="orc-price" contenteditable="true">0,00</td>
+              </tr>
+              <tr>
+                <td>Taxa Vistoria – DETRAN/RS</td>
+                <td style="text-align: center;"><input type="checkbox" class="orc-check"
+                    onchange="updateOrcamentoTotal()" checked></td>
+                <td style="text-align: right;" class="orc-price" contenteditable="true">104,37</td>
+              </tr>
+              <tr>
+                <td>Taxa de Expedição – CRLV</td>
+                <td style="text-align: center;"><input type="checkbox" class="orc-check"
+                    onchange="updateOrcamentoTotal()" checked></td>
+                <td style="text-align: right;" class="orc-price" contenteditable="true">288,00</td>
+              </tr>
+              <tr>
+                <td>Escolha de Placa (Opcional ) – DETRAN/RS</td>
+                <td style="text-align: center;"><input type="checkbox" class="orc-check"
+                    onchange="updateOrcamentoTotal()" checked></td>
+                <td style="text-align: right;" class="orc-price" contenteditable="true">475,03</td>
+              </tr>
+              <tr>
+                <td>Confecção Placa Metálica Oficial – Agente credenciado</td>
+                <td style="text-align: center;"><input type="checkbox" class="orc-check"
+                    onchange="updateOrcamentoTotal()" checked></td>
+                <td style="text-align: right;" class="orc-price" contenteditable="true">370,00</td>
+              </tr>
+              <tr>
+                <td>Comunicação de Venda</td>
+                <td style="text-align: center;"><input type="checkbox" class="orc-check"
+                    onchange="updateOrcamentoTotal()" checked></td>
+                <td style="text-align: right;" class="orc-price" contenteditable="true">46,63</td>
+              </tr>
+              <tr>
+                <td>Seguro Placa Verde</td>
+                <td style="text-align: center;"><input type="checkbox" class="orc-check"
+                    onchange="updateOrcamentoTotal()" checked></td>
+                <td style="text-align: right;" class="orc-price" contenteditable="true">20,00</td>
+              </tr>
+              <tr>
+                <td>Cartório/Cópias</td>
+                <td style="text-align: center;"><input type="checkbox" class="orc-check"
+                    onchange="updateOrcamentoTotal()"></td>
+                <td style="text-align: right;" class="orc-price" contenteditable="true">0,00</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="orc-total-box">
+            <div style="font-weight: 900; text-transform: uppercase;">Valor Consolidado:</div>
+            <div class="orc-total-amt" id="orc-total">R$ 0,00</div>
+          </div>
+
+          <div class="orc-legal">
+            <div style="color: red; text-align: center; font-weight: 900; margin-bottom: 0.5rem;">É DIREITO DO
+              CONSUMIDOR A LIVRE ESCOLHA DE DESPACHANTE.</div>
+            <p>PODE O CLIENTE OPTAR PELA CONTRATAÇÃO DE OUTRO PROFISSIONAL QUE NÃO O INDICADO PELA CONCESSIONÁRIA.</p>
+            <p>CASO O CLIENTE OPTE PELA CONTRATAÇÃO DE OUTRO DESPACHANTE (DIVERSO DO INDICADO), A CONCESSIONÁRIA FICA
+              DESOBRIGADA DAS SEGUINTES RESPONSABILIDADES, CABENDO-AS AO CONSUMIDOR:</p>
+            <p>a) AO DESLOCAMENTO, RETIRADA, LOCOMOÇÃO, CONDUTOR E SEGURO DO VEÍCULO;</p>
+            <p>b) PELO FORNECIMENTO DE PLACAS VERDES PARA A CIRCULAÇÃO DO VEÍCULO ADQUIRIDO ANTES DE EMPLACADO,
+              PROVIDÊNCIAS QUE FICARÃO A CARGO DO CLIENTE, INCLUSIVE COM A CONTRATAÇÃO DE GUINCHO/AUTO PLATAFORMAS, CASO
+              NECESSÁRIA, PARA A RETIRADA DO VEÍCULO DA CONCESSIONÁRIA.</p>
+            <p>A CONCESSIONÁRIA NÃO SE RESPONSABILIZA POR EVENTUAL ATRASO NO REGISTRO E EMPLACAMENTO DO VEÍCULO, BEM
+              COMO POR EVENTUAIS PREJUÍZOS E ENTRAVES QUE VENHAM A OCORRER.</p>
+          </div>
+
+          <div class="orc-sigs">
+            <div>
+              <div class="orc-sig-line">Responsável Técnico</div>
+            </div>
+            <div>
+              <div class="orc-sig-line">Assinatura do Cliente</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-actions no-print">
+          <button class="btn btn-acordo" type="button" onclick="window.print()">🖨️ Imprimir Orçamento</button>
+        </div>
+      </div>
+
     </div>
 
     <div class="footer">Desenvolvido por Alberto Mateus para o Grupo San Marino</div>
@@ -1081,7 +1460,8 @@
         'quit_nomeCompleto': campos.nomeCompleto, 'quit_cpfCnpj': campos.cpfCnpj, 'quit_cidade': campos.cidade,
         'res_nomeCompleto': campos.nomeCompleto, 'res_cpfCnpj': campos.cpfCnpj, 'res_endereco': campos.endereco, 'res_bairro': campos.bairro, 'res_cidade': campos.cidade, 'res_estado': campos.estado,
         'dep_nomeCompleto': campos.nomeCompleto, 'dep_cpfCnpj': campos.cpfCnpj, 'dep_cidade': campos.cidade,
-        'inst_nomeCompleto': campos.nomeCompleto, 'inst_cpfCnpj': campos.cpfCnpj, 'inst_cidade': campos.cidade
+        'inst_nomeCompleto': campos.nomeCompleto, 'inst_cpfCnpj': campos.cpfCnpj, 'inst_cidade': campos.cidade,
+        'orc_proprietario': campos.nomeCompleto, 'orc_cpfCnpj': campos.cpfCnpj
       };
 
       for (let id in mapa) {
@@ -2070,7 +2450,39 @@
       applyAnoModeloMask(document.getElementById('quit_anoModelo'));
       applyAnoModeloMask(document.getElementById('quit_veiculoAdquiridoAnoModelo'));
       applyAnoModeloMask(document.getElementById('dep_ano'));
-    });</script>
+      applyAnoModeloMask(document.getElementById('orc_anoModeloCor'));
+
+      // Iniciar Orçamento
+      setOrcamentoDate();
+      updateOrcamentoTotal();
+    });
+
+    /* =========================
+       Funções Orçamento Detran
+       ========================= */
+    function setOrcamentoDate() {
+      const el = document.getElementById('orc_dataRecibo');
+      if (!el) return;
+      const today = new Date();
+      const d = String(today.getDate()).padStart(2, '0');
+      const m = String(today.getMonth() + 1).padStart(2, '0');
+      const y = today.getFullYear();
+      el.value = `${d}/${m}/${y}`;
+    }
+
+    function updateOrcamentoTotal() {
+      const rows = document.querySelectorAll('#orc-body tr');
+      let total = 0;
+      rows.forEach(row => {
+        const checkbox = row.querySelector('.orc-check');
+        const priceCell = row.querySelector('.orc-price');
+        if (!checkbox || checkbox.checked) {
+          total += parseCurrencyToNumberBR(priceCell.innerText || priceCell.value || '0');
+        }
+      });
+      const totalEl = document.getElementById('orc-total');
+      if (totalEl) totalEl.innerText = formatBRL(total);
+    }</script>
 </body>
 
 </html>
