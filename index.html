@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gerador de Documentos - Procurações e Termos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <style>
     :root {
@@ -36,6 +37,110 @@
       --btn-pad-x: 16px;
       --btn-font: 14px;
       --actions-pad-top: 12px;
+    }
+
+    /* Toast Notification System */
+    #toast-container {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .toast {
+      pointer-events: auto;
+      min-width: 320px;
+      max-width: 450px;
+      padding: 16px 24px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(15px) saturate(180%);
+      -webkit-backdrop-filter: blur(15px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 10px 30px -5px rgba(0, 0, 0, 0.1),
+        0 20px 40px -10px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #1f2937;
+      font-size: 14px;
+      font-weight: 700;
+      animation: toastSlideIn 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .toast:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.05),
+        0 15px 35px -5px rgba(0, 0, 0, 0.12),
+        0 25px 45px -10px rgba(0, 0, 0, 0.08);
+    }
+
+    .toast i {
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toast.success {
+      border-left: 6px solid #10b981;
+    }
+
+    .toast.success i {
+      color: #10b981;
+    }
+
+    .toast.error {
+      border-left: 6px solid #ef4444;
+    }
+
+    .toast.error i {
+      color: #ef4444;
+    }
+
+    .toast.info {
+      border-left: 6px solid #3b82f6;
+    }
+
+    .toast.info i {
+      color: #3b82f6;
+    }
+
+    @keyframes toastSlideIn {
+      from {
+        transform: translateX(120%) scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes toastSlideOut {
+      from {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(120%) scale(0.9);
+        opacity: 0;
+      }
+    }
+
+    .toast-exiting {
+      animation: toastSlideOut 0.4s cubic-bezier(0.4, 0, 1, 1) forwards;
     }
 
     * {
@@ -442,28 +547,6 @@
       background: linear-gradient(135deg, #111827, #374151);
     }
 
-    .status {
-      margin: 12px 0;
-      padding: 12px;
-      border-radius: 12px;
-      display: none;
-      border: 1px solid var(--border);
-      font-weight: 800;
-      font-size: 13px;
-    }
-
-    .status.success {
-      background: rgba(22, 163, 74, 0.10);
-      color: #166534;
-      border-color: rgba(22, 163, 74, 0.25);
-    }
-
-    .status.error {
-      background: rgba(220, 38, 38, 0.10);
-      color: #7f1d1d;
-      border-color: rgba(220, 38, 38, 0.25);
-    }
-
     .hidden {
       display: none !important;
     }
@@ -731,7 +814,7 @@
     <h1>Gerador de Documentos - San Marino</h1>
     <p class="subtitle">Clique em um dos documentos e preencha os dados.</p>
 
-    <div class="status" id="status"></div>
+    <div id="toast-container"></div>
 
     <!-- =========================
          CAPA (apenas nomes dos documentos)
@@ -1505,12 +1588,38 @@
     /* =========================
        UI
        ========================= */
-    function mostrarStatus(msg, tipo) {
-      const el = document.getElementById('status');
-      el.textContent = msg;
-      el.className = 'status ' + tipo;
-      el.style.display = 'block';
-      setTimeout(() => el.style.display = 'none', 5000);
+    // Toast Notification System
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+
+      let icon = '';
+      if (type === 'success') icon = '<i class="fa-solid fa-circle-check"></i>';
+      else if (type === 'error') icon = '<i class="fa-solid fa-circle-exclamation"></i>';
+      else if (type === 'info') icon = '<i class="fa-solid fa-circle-info"></i>';
+
+      toast.innerHTML = `
+        ${icon}
+        <span style="flex: 1;">${message}</span>
+        <i class="fa-solid fa-xmark" style="font-size: 14px; opacity: 0.5; cursor: pointer;"></i>
+      `;
+
+      container.appendChild(toast);
+
+      const removeToast = () => {
+        toast.classList.add('toast-exiting');
+        setTimeout(() => toast.remove(), 400);
+      };
+
+      const autoRemove = setTimeout(removeToast, 5000);
+
+      toast.onclick = () => {
+        clearTimeout(autoRemove);
+        removeToast();
+      };
     }
 
     /* =========================
@@ -2051,7 +2160,7 @@
       const dados = obterDadosAcordo();
 
       if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.placa) {
-        mostrarStatus('Para a Procuração de Acordo, preencha pelo menos o nome completo, CPF/CNPJ e placa do veículo.', 'error');
+        showToast('Para a Procuração de Acordo, preencha pelo menos o nome completo, CPF/CNPJ e placa do veículo.', 'error');
         return;
       }
 
@@ -2104,14 +2213,14 @@
       y = addAssinaturaSimples(doc, y, '(Assinatura reconhecida por autenticidade)');
 
       doc.save(buildFilename('PROCURACAO_ACORDO', placa, nomeCompleto));
-      mostrarStatus('PDF da Procuração de Acordo gerado com sucesso!', 'success');
+      showToast('PDF da Procuração de Acordo gerado com sucesso!', 'success');
     }
 
     function gerarProcuracaoRecebimento() {
       const dados = obterDadosRecebimento();
 
       if (!dados.nomeCompleto || !dados.placa) {
-        mostrarStatus('Para a Procuração de Recebimento, preencha pelo menos o nome do cliente e a placa do veículo.', 'error');
+        showToast('Para a Procuração de Recebimento, preencha pelo menos o nome do cliente e a placa do veículo.', 'error');
         return;
       }
 
@@ -2198,14 +2307,14 @@
       doc.text('Outorgante', PDF_LAYOUT.pageWidth / 2, y, { align: 'center' });
 
       doc.save(buildFilename('PROCURACAO_RECEBIMENTO', placa, nomeCompleto));
-      mostrarStatus('PDF da Procuração de Recebimento gerado com sucesso!', 'success');
+      showToast('PDF da Procuração de Recebimento gerado com sucesso!', 'success');
     }
 
     function gerarDeclaracaoResidencia() {
       const dados = obterDadosResidencia();
 
       if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.endereco) {
-        mostrarStatus('Para a Declaração de Residência, preencha pelo menos o nome completo, CPF e endereço.', 'error');
+        showToast('Para a Declaração de Residência, preencha pelo menos o nome completo, CPF e endereço.', 'error');
         return;
       }
 
@@ -2232,14 +2341,14 @@
       y = addAssinaturaSimples(doc, y, 'Assinatura conforme documento apresentado');
 
       doc.save(buildFilename('DECLARACAO_RESIDENCIA', '', nomeCompleto));
-      mostrarStatus('PDF da Declaração de Residência gerado com sucesso!', 'success');
+      showToast('PDF da Declaração de Residência gerado com sucesso!', 'success');
     }
 
     function gerarDeclaracaoDepositoTerceiros() {
       const dados = obterDadosDepositoTerceiros();
 
       if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.valor) {
-        mostrarStatus('Para a Declaração de Depósito, preencha pelo menos: nome completo, CPF/CNPJ e valor do depósito.', 'error');
+        showToast('Para a Declaração de Depósito, preencha pelo menos: nome completo, CPF/CNPJ e valor do depósito.', 'error');
         return;
       }
 
@@ -2288,14 +2397,14 @@
       // usa chassi/placa no nome do arquivo (se informado)
       const placaParaNome = dados.chassiPlaca || '';
       doc.save(buildFilename('DECLARACAO_DEPOSITO_TERCEIROS', placaParaNome, nomeCompleto));
-      mostrarStatus('PDF da Declaração de Depósito para Terceiros gerado com sucesso!', 'success');
+      showToast('PDF da Declaração de Depósito para Terceiros gerado com sucesso!', 'success');
     }
 
     function gerarInstrumentoResponsabilidade() {
       const dados = obterDadosInstrumento();
 
       if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.chassi || !dados.modelo) {
-        mostrarStatus('Para o Instrumento de Responsabilidade, preencha pelo menos: nome, CPF/CNPJ, modelo e chassi do veículo.', 'error');
+        showToast('Para o Instrumento de Responsabilidade, preencha pelo menos: nome, CPF/CNPJ, modelo e chassi do veículo.', 'error');
         return;
       }
 
@@ -2322,14 +2431,14 @@
       y = addAssinaturasDuplas(doc, y, 'Assinatura do cliente', 'Assinatura da concessionária');
 
       doc.save(buildFilename('RESPONSABILIDADE_ENTREGA', placa, nomeCompleto));
-      mostrarStatus('PDF do Instrumento de Responsabilidade gerado com sucesso!', 'success');
+      showToast('PDF do Instrumento de Responsabilidade gerado com sucesso!', 'success');
     }
 
     function gerarTermoQuitacaoTerceiro() {
       const dados = obterDadosQuitacao();
 
       if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.modelo || !dados.placa || !dados.chassi) {
-        mostrarStatus('Para o Termo de Quitação, preencha pelo menos: dados do cliente (nome/CPF) e do veículo entregue (modelo/placa/chassi).', 'error');
+        showToast('Para o Termo de Quitação, preencha pelo menos: dados do cliente (nome/CPF) e do veículo entregue (modelo/placa/chassi).', 'error');
         return;
       }
 
@@ -2410,7 +2519,7 @@
       doc.text('2) _______________________________', PDF_LAYOUT.marginLeft, y);
 
       doc.save(buildFilename('TERMO_QUITACAO_TERCEIRO', placa, nomeCompleto));
-      mostrarStatus('PDF do Termo de Quitação gerado com sucesso!', 'success');
+      showToast('PDF do Termo de Quitação gerado com sucesso!', 'success');
     }
 
     /* =========================
