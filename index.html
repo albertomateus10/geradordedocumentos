@@ -812,7 +812,7 @@
 <body>
   <div class="container">
     <h1>Gerador de Documentos - San Marino</h1>
-    <p class="subtitle">Clique em um dos documentos e preencha os dados.</p>
+    <p class="subtitle"></p>
 
     <div id="toast-container"></div>
 
@@ -842,7 +842,7 @@
 
         <button class="cover-btn" type="button" onclick="abrirDocumento('doc-quitacao')">
           <div class="cover-left">
-            <div class="cover-doc-pill cover-doc-quit">TERMO DE QUITAÇÃO (ENTRADA DE TERCEIRO)</div>
+            <div class="cover-doc-pill cover-doc-quit">TERMO DE QUITAÇÃO (veículo de terceiros)</div>
           </div>
         </button>
 
@@ -977,7 +977,7 @@
           </div>
           <div class="form-item">
             <label for="acordo_renavam">Renavam</label>
-            <input type="text" id="acordo_renavam" placeholder="Número do Renavam">
+            <input type="text" id="acordo_renavam" placeholder="11 caracteres">
           </div>
           <div class="form-item">
             <label for="acordo_cor">Cor</label>
@@ -1196,8 +1196,8 @@
             <input type="text" id="inst_modelo" placeholder="Ex: FIAT/FASTBACK">
           </div>
           <div class="form-item">
-            <label for="inst_chassi">Placa</label>
-            <input type="text" id="inst_chassi" placeholder="JDO1234">
+            <label for="inst_chassi">Chassi</label>
+            <input type="text" id="inst_chassi" placeholder="17 caracteres">
           </div>
         </div>
 
@@ -1438,16 +1438,16 @@
                 <td style="text-align: right;" class="orc-price">850,00</td>
               </tr>
               <tr>
-                <td>IPVA/RS - Parcela Anual 2025</td>
+                <td>IPVA/RS - Parcela Anual 2026</td>
                 <td style="text-align: center;"><input type="checkbox" class="orc-check"
                     onchange="updateOrcamentoTotal()" checked></td>
                 <td style="text-align: right;" class="orc-price" contenteditable="true"
-                  oninput="updateOrcamentoTotal()">2.624,80</td>
+                  oninput="updateOrcamentoTotal()">0,00</td>
               </tr>
               <tr>
                 <td>Taxa de transferência de propriedade – DETRAN/RS</td>
                 <td style="text-align: center;"><input type="checkbox" class="orc-check"
-                    onchange="updateOrcamentoTotal()"></td>
+                    onchange="updateOrcamentoTotal()" checked></td>
                 <td style="text-align: right;" class="orc-price" contenteditable="true"
                   oninput="updateOrcamentoTotal()">0,00</td>
               </tr>
@@ -1490,7 +1490,7 @@
               <tr>
                 <td>Cartório/Cópias</td>
                 <td style="text-align: center;"><input type="checkbox" class="orc-check"
-                    onchange="updateOrcamentoTotal()"></td>
+                    onchange="updateOrcamentoTotal()" checked></td>
                 <td style="text-align: right;" class="orc-price" contenteditable="true"
                   oninput="updateOrcamentoTotal()">0,00</td>
               </tr>
@@ -2164,6 +2164,16 @@
         return;
       }
 
+      if (dados.chassi && dados.chassi.length !== 17) {
+        showToast('O campo Chassi deve ter exatamente 17 caracteres.', 'error');
+        return;
+      }
+
+      if (dados.renavam && dados.renavam.length !== 11) {
+        showToast('O campo Renavam deve ter exatamente 11 caracteres.', 'error');
+        return;
+      }
+
       const doc = createDocA4();
       const x = PDF_LAYOUT.marginLeft;
       const w = contentWidth();
@@ -2221,6 +2231,11 @@
 
       if (!dados.nomeCompleto || !dados.placa) {
         showToast('Para a Procuração de Recebimento, preencha pelo menos o nome do cliente e a placa do veículo.', 'error');
+        return;
+      }
+
+      if (dados.chassi && dados.chassi.length !== 17) {
+        showToast('O campo Chassi deve ter exatamente 17 caracteres.', 'error');
         return;
       }
 
@@ -2408,6 +2423,11 @@
         return;
       }
 
+      if (dados.chassi && dados.chassi.length !== 17) {
+        showToast('O campo Chassi deve ter exatamente 17 caracteres.', 'error');
+        return;
+      }
+
       const doc = createDocA4();
       const x = PDF_LAYOUT.marginLeft;
       const w = contentWidth();
@@ -2439,6 +2459,16 @@
 
       if (!dados.nomeCompleto || !dados.cpfCnpj || !dados.modelo || !dados.placa || !dados.chassi) {
         showToast('Para o Termo de Quitação, preencha pelo menos: dados do cliente (nome/CPF) e do veículo entregue (modelo/placa/chassi).', 'error');
+        return;
+      }
+
+      if (dados.chassi && dados.chassi.length !== 17) {
+        showToast('O campo Chassi deve ter exatamente 17 caracteres.', 'error');
+        return;
+      }
+
+      if (dados.veiculoAdquiridoChassi && dados.veiculoAdquiridoChassi.length !== 17) {
+        showToast('O campo Chassi do veículo adquirido deve ter exatamente 17 caracteres.', 'error');
         return;
       }
 
