@@ -678,6 +678,10 @@
       font-weight: 700;
     }
 
+    .orc-price:not([contenteditable="true"]) {
+      font-style: italic;
+    }
+
     .orc-total-box {
       margin-top: 0.4rem;
       display: flex;
@@ -1449,7 +1453,7 @@
                 <td style="text-align: center;"><input type="checkbox" class="orc-check"
                     onchange="updateOrcamentoTotal()" checked></td>
                 <td style="text-align: right;" class="orc-price" contenteditable="true"
-                  oninput="updateOrcamentoTotal()">0,00</td>
+                  oninput="updateOrcamentoTotal()">1.330,00</td>
               </tr>
               <tr>
                 <td>Taxa Vistoria – DETRAN/RS</td>
