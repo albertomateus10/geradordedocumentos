@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gerador de Documentos - Procurações e Termos</title>
+  <title>Central de Apoio ao Vendedor</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <style>
@@ -168,7 +168,7 @@
 
     h1 {
       text-align: center;
-      margin: 6px 0 4px;
+      margin: 12px 0 22px;
       font-size: 22px;
       letter-spacing: 0.2px;
     }
@@ -196,6 +196,71 @@
       gap: 10px;
     }
 
+    /* Estilos para a Navegação Principal */
+    .main-nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 10px;
+      margin-bottom: 18px;
+    }
+
+    .nav-btn {
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .nav-btn i {
+      font-size: 20px;
+      color: var(--primary);
+    }
+
+    .nav-btn span {
+      font-weight: 900;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: var(--text);
+      text-align: center;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: 0 15px 30px rgba(37, 99, 235, 0.15);
+    }
+
+    .nav-btn.active {
+      background: var(--primary) !important;
+      border-color: var(--primary) !important;
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(37, 99, 235, 0.25);
+    }
+
+    .nav-btn.active i,
+    .nav-btn.active span {
+      color: #fff !important;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 768px) {
+      .main-nav {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .cover-btn {
       width: 100%;
       border: 1px solid rgba(229, 231, 235, 0.95);
@@ -205,11 +270,11 @@
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       gap: 10px;
       box-shadow: 0 10px 18px rgba(17, 24, 39, 0.06);
       transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-      text-align: left;
+      text-align: center;
       overflow: hidden;
     }
 
@@ -224,9 +289,10 @@
       flex-direction: column;
       gap: 6px;
       min-width: 0;
-      text-align: left;
-      align-items: flex-start;
+      text-align: center;
+      align-items: center;
       flex: 1 1 auto;
+      width: 100%;
     }
 
     /* ===== NOME DO DOCUMENTO COM CARA DE BOTÃO (PILL PREMIUM) ===== */
@@ -333,6 +399,25 @@
       border-color: rgba(251, 191, 36, 0.32);
     }
 
+    /* ===== TEXTO CONTRATUAL ===== */
+    .pill-contrato {
+      color: #075985;
+      background: rgba(95, 168, 255, 0.14);
+      border-color: rgba(95, 168, 255, 0.30);
+    }
+
+    .cover-doc-contrato {
+      color: #075985;
+      background: rgba(95, 168, 255, 0.12);
+      border-color: rgba(95, 168, 255, 0.32);
+    }
+
+    .doc-title-contrato {
+      color: #075985;
+      background: rgba(95, 168, 255, 0.12);
+      border-color: rgba(95, 168, 255, 0.32);
+    }
+
     /* ===== DEPÓSITO PARA TERCEIROS ===== */
     .pill-dep {
       color: #0f172a;
@@ -340,8 +425,30 @@
       border-color: rgba(148, 163, 184, 0.35);
     }
 
-    /* cores do nome-pílula na capa */
-    .cover-doc-dep {
+    /* cores do nome-pílula na capa - NEUTRALIZADO (padrao) */
+    .cover-btn .cover-doc-pill {
+      color: var(--text);
+      background: #f3f4f6;
+      border-color: #e5e7eb;
+      transition: all 0.2s ease;
+    }
+
+    /* Estado ATIVO do botão da capa */
+    .cover-btn.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+      background: #eff6ff;
+    }
+
+    .cover-btn.active .cover-doc-pill {
+      color: #fff;
+      background: var(--primary);
+      border-color: var(--primary);
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+    }
+
+    /* cores do título (mantidos nos cards internos) */
+    .doc-title-dep {
       color: #0f172a;
       background: rgba(148, 163, 184, 0.14);
       border-color: rgba(148, 163, 184, 0.36);
@@ -547,6 +654,10 @@
       background: linear-gradient(135deg, #111827, #374151);
     }
 
+    .btn-contrato {
+      background: linear-gradient(135deg, #5fa8ff, #38bdf8);
+    }
+
     .hidden {
       display: none !important;
     }
@@ -588,6 +699,354 @@
       .cover-doc-pill {
         font-size: 12.5px;
         padding: 9px 12px;
+      }
+    }
+
+    /* ===== ESTILOS TEXTO CONTRATUAL ===== */
+    .tabs-contrato {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .tab-contrato {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #f7f9fd;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      transition: .18s ease;
+      text-align: center;
+    }
+
+    .tab-contrato:hover {
+      transform: translateY(-1px);
+      border-color: rgba(95, 168, 255, 0.3);
+    }
+
+    .tab-contrato.active {
+      background: rgba(95, 168, 255, 0.16);
+      border-color: #5fa8ff;
+      box-shadow: 0 0 0 4px rgba(95, 168, 255, 0.14);
+    }
+
+    .texto-contratual {
+      width: 100%;
+      min-height: 320px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      padding: 20px;
+      font-family: "Times New Roman", Georgia, serif;
+      font-size: 14px;
+      line-height: 1.75;
+      color: #111827;
+      resize: vertical;
+      outline: none;
+    }
+
+    .texto-contratual:focus {
+      border-color: #5fa8ff;
+      box-shadow: 0 0 0 4px rgba(95, 168, 255, 0.14);
+    }
+
+    /* ===== ESTILOS CALCULADORA DE JUROS ===== */
+    .pill-calc {
+      color: #0ea5e9;
+      background: rgba(14, 165, 233, 0.14);
+      border-color: rgba(14, 165, 233, 0.30);
+    }
+
+    .cover-doc-calc {
+      color: #0ea5e9;
+      background: rgba(14, 165, 233, 0.12);
+      border-color: rgba(14, 165, 233, 0.32);
+    }
+
+    .doc-title-calc {
+      color: #0ea5e9;
+      background: rgba(14, 165, 233, 0.12);
+      border-color: rgba(14, 165, 233, 0.32);
+    }
+
+    .btn-calc {
+      background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+    }
+
+    /* Calculadora - Campo de valor */
+    .calc-input-grid {
+      display: grid;
+      grid-template-columns: 220px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .calc-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(15, 23, 42, .02);
+      min-height: 42px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .calc-input-wrap:focus-within {
+      border-color: rgba(14, 165, 233, .50);
+      box-shadow: 0 0 0 4px rgba(14, 165, 233, .16);
+      background: rgba(14, 165, 233, .03);
+    }
+
+    .calc-prefix {
+      font-weight: 900;
+      font-size: 12px;
+      color: rgba(15, 23, 42, .78);
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(229, 231, 235, 0.8);
+      background: rgba(14, 165, 233, .10);
+    }
+
+    .calc-input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: .01em;
+      caret-color: transparent;
+    }
+
+    .calc-input::placeholder {
+      color: rgba(120, 130, 150, .75);
+      font-weight: 600;
+    }
+
+    /* Botões dos bancos */
+    .calc-bank-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .calc-bank-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, .85);
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-weight: 900;
+      font-size: 12.5px;
+      cursor: pointer;
+      color: var(--text);
+      transition: transform .08s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+      letter-spacing: .02em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+      box-shadow: 0 10px 18px rgba(17, 24, 39, 0.08);
+      min-width: 180px;
+      justify-content: center;
+    }
+
+    .calc-bank-btn:hover {
+      background: rgba(14, 165, 233, .05);
+      border-color: rgba(14, 165, 233, .28);
+      transform: translateY(-1px);
+    }
+
+    .calc-bank-btn:active {
+      transform: translateY(0px);
+    }
+
+    .calc-bank-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+    }
+
+    .calc-bank-btn.banri .calc-bank-dot {
+      background: linear-gradient(90deg, #06b6d4, #22c55e);
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, .10);
+    }
+
+    .calc-bank-btn.rede .calc-bank-dot {
+      background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, .12);
+    }
+
+    .calc-bank-btn.active {
+      border-color: rgba(14, 165, 233, .40);
+      background: rgba(14, 165, 233, .10);
+      box-shadow: 0 18px 40px rgba(14, 165, 233, .20);
+      color: #0369a1;
+    }
+
+    .calc-bank-btn:not(.active) {
+      opacity: 0.92;
+      background: rgba(255, 255, 255, .72);
+      color: rgba(15, 23, 42, .80);
+    }
+
+    /* Estado vazio */
+    .calc-empty-state {
+      border: 1px dashed rgba(15, 23, 42, .16);
+      background: rgba(15, 23, 42, .02);
+      border-radius: 14px;
+      padding: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      font-weight: 650;
+      text-align: center;
+    }
+
+    /* Tabela da calculadora */
+    .calc-table-wrap {
+      border-radius: 14px;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, .92);
+      margin-bottom: 12px;
+    }
+
+    .calc-sheet {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: transparent;
+    }
+
+    .calc-sheet thead th {
+      background: rgba(37, 99, 235, .08);
+      border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: rgba(15, 23, 42, .76);
+      padding: 10px 8px;
+      text-align: center;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .calc-sheet thead th.center {
+      text-align: center;
+    }
+
+    .calc-sheet tbody td {
+      padding: 10px 8px;
+      font-size: 12.5px;
+      border-bottom: 1px solid rgba(229, 231, 235, 0.6);
+      background: transparent;
+      vertical-align: middle;
+      font-weight: 400;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .calc-sheet tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    /* Centralização das colunas da calculadora (mantém a 1ª coluna à esquerda) */
+    .calc-sheet thead th,
+    .calc-sheet tbody td {
+      text-align: center;
+    }
+
+    .calc-sheet thead th:first-child,
+    .calc-sheet tbody td:first-child {
+      text-align: left;
+    }
+
+
+    .calc-sheet tbody tr:hover td {
+      background: rgba(14, 165, 233, .04);
+    }
+
+    .calc-sheet .calc-muted {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .calc-sheet .calc-money {
+      font-weight: 400;
+      white-space: nowrap;
+    }
+
+    .calc-sheet th.calc-highlight {
+      background: rgba(14, 165, 233, .14);
+      font-size: 12px;
+      color: #0369a1;
+      font-weight: 900;
+    }
+
+    .calc-sheet td.calc-highlight {
+      background: rgba(14, 165, 233, .10);
+      font-weight: 700;
+      font-size: 14px;
+      color: #0369a1;
+    }
+
+    .calc-sheet th.calc-sep,
+    .calc-sheet td.calc-sep {
+      border-left: 2px solid rgba(14, 165, 233, .22);
+    }
+
+    .calc-hint-text {
+      font-size: 11.5px;
+      color: #94a3b8;
+      margin-top: 10px;
+      line-height: 1.45;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .calc-rotate-note {
+      display: none;
+      margin: 10px auto 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(15, 23, 42, .10);
+      background: rgba(255, 255, 255, .75);
+      color: rgba(15, 23, 42, .78);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      .calc-input-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calc-bank-btn {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .calc-sheet {
+        min-width: 840px;
+      }
+    }
+
+    @media (max-width: 760px) and (orientation: portrait) {
+      .calc-rotate-note {
+        display: block;
       }
     }
 
@@ -734,77 +1193,124 @@
     }
 
     @media print {
-
-      .no-print,
-      .container>h1,
-      .subtitle,
-      #cover,
-      .cover,
-      .head,
-      .footer,
-      .doc-actions,
-      .status {
-        display: none !important;
-      }
-
-      .orc-total-box {
-        background: transparent !important;
-        color: #000 !important;
-        border: 1px solid #000;
-        margin-top: 0.5rem;
-      }
-
-      .orc-total-amt {
-        color: #000 !important;
-      }
-
       body {
         background: white !important;
         padding: 0 !important;
         margin: 0 !important;
       }
 
+      /* Hide all UI elements */
+      .container>h1,
+      .subtitle,
+      .main-nav,
+      .nav-btn,
+      .cover,
+      .head,
+      .footer,
+      .doc-actions,
+      #dados-cliente-global,
+      .section-title {
+        display: none !important;
+      }
+
       .container {
         box-shadow: none !important;
         border: none !important;
-        width: 100% !important;
-        max-width: 100% !important;
         padding: 0 !important;
         margin: 0 !important;
-      }
-
-      .doc-area {
-        display: block !important;
-        margin: 0 !important;
-        padding: 0 !important;
       }
 
       .doc-card {
-        display: none !important;
-        /* Esconde todos os cards por padrão na impressão */
-        padding: 0 !important;
-        margin: 0 !important;
         border: none !important;
         box-shadow: none !important;
-      }
-
-      #doc-orcamento {
-        display: block !important;
-        /* Força a exibição apenas do card de orçamento */
-      }
-
-      .orc-card {
-        border: none !important;
         padding: 0 !important;
-        margin: 0 auto !important;
-        transform: scale(0.93);
-        /* Reduced size to fit in one page */
+        margin: 0 !important;
+      }
+
+      /* Reduce budget card size to fit on one page */
+      .orc-card {
+        max-width: 100%;
+        margin: 0;
+        padding: 0.8rem 1.2rem !important;
+        border: 1px solid #000 !important;
+        transform: scale(0.95);
         transform-origin: top center;
+      }
+
+      .orc-header {
+        margin-bottom: 0.5rem !important;
+      }
+
+      .orc-header h1 {
+        font-size: 0.95rem !important;
+        margin-bottom: 0.3rem !important;
+        padding-bottom: 0.3rem !important;
+      }
+
+      .orc-grid {
+        gap: 0.25rem !important;
+        margin-bottom: 0.3rem !important;
+      }
+
+      .orc-field {
+        padding: 0.2rem 0.5rem !important;
+      }
+
+      .orc-label {
+        font-size: 0.55rem !important;
+        margin-bottom: 1px !important;
+      }
+
+      .orc-input {
+        font-size: 0.8rem !important;
+      }
+
+      .orc-table {
+        margin: 0.4rem 0 !important;
+        font-size: 0.7rem !important;
+      }
+
+      .orc-table th {
+        font-size: 0.6rem !important;
+        padding: 0.25rem !important;
+      }
+
+      .orc-table td {
+        padding: 0.25rem 0.5rem !important;
+      }
+
+      .orc-total-box {
+        background: transparent !important;
+        color: #000 !important;
+        border: 1px solid #000;
+        margin-top: 0.3rem !important;
+        padding: 0.3rem 0.8rem !important;
+      }
+
+      .orc-total-amt {
+        color: #000 !important;
+        font-size: 1.1rem !important;
+      }
+
+      .orc-legal {
+        margin-top: 0.4rem !important;
+        padding: 0.4rem !important;
+        font-size: 0.52rem !important;
+        line-height: 1.15 !important;
+      }
+
+      .orc-sigs {
+        margin-top: 2.5rem !important;
+        gap: 1.5rem !important;
+      }
+
+      .orc-sig-line {
+        font-size: 0.6rem !important;
+        padding-top: 3px !important;
       }
 
       @page {
         margin: 0.5cm;
-        /* Restored original margin to keep it on one page */
         size: a4;
       }
     }
@@ -815,61 +1321,77 @@
 
 <body>
   <div class="container">
-    <h1>Gerador de Documentos - San Marino</h1>
-    <p class="subtitle">Desenvolvido por Alberto Mateus para o Grupo San Marino</p>
+    <h1>Central de Apoio ao Vendedor</h1>
 
     <div id="toast-container"></div>
 
     <!-- =========================
          CAPA (apenas nomes dos documentos)
          ========================= -->
-    <div class="cover" id="cover">
+    <!-- Navegação Principal -->
+    <div class="main-nav">
+      <button class="nav-btn" id="btn-gerador" onclick="alternarSecao('gerador')">
+        <i class="fas fa-file-signature"></i>
+        <span>GERADOR DE DOCUMENTOS</span>
+      </button>
+      <button class="nav-btn" id="btn-calculadora" onclick="alternarSecao('calculadora')">
+        <i class="fas fa-calculator"></i>
+        <span>Calculadora</span>
+      </button>
+      <button class="nav-btn" id="btn-texto-legal" onclick="alternarSecao('texto-legal')">
+        <i class="fas fa-gavel"></i>
+        <span>Texto Legal</span>
+      </button>
+    </div>
+
+    <!-- Seção: Gerador de Documentos (Submenu) -->
+    <div class="cover hidden" id="secao-gerador">
+      <div class="section-title"
+        style="border-top: none; margin-top: 0; padding-top: 0; font-size: 16px; margin-bottom: 15px; text-align: center;">
+        SELECIONE O DOCUMENTO
+      </div>
       <div class="cover-grid">
-
-        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-recebimento')">
+        <button class="cover-btn" id="btn-doc-recebimento" type="button" onclick="abrirDocumento('doc-recebimento')">
           <div class="cover-left">
-            <div class="cover-doc-pill cover-doc-receb">PROCURAÇÃO DE RECEBIMENTO DO USADO</div>
+            <div class="cover-doc-pill">PROCURAÇÃO DE RECEBIMENTO DO USADO</div>
           </div>
         </button>
 
-        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-acordo')">
+        <button class="cover-btn" id="btn-doc-acordo" type="button" onclick="abrirDocumento('doc-acordo')">
           <div class="cover-left">
-            <div class="cover-doc-pill cover-doc-acordo">PROCURAÇÃO DE ACORDO</div>
+            <div class="cover-doc-pill">PROCURAÇÃO DE ACORDO</div>
           </div>
         </button>
 
-        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-instrumento')">
+        <button class="cover-btn" id="btn-doc-instrumento" type="button" onclick="abrirDocumento('doc-instrumento')">
           <div class="cover-left">
-            <div class="cover-doc-pill cover-doc-inst">INSTRUMENTO DE RESPONSABILIDADE</div>
+            <div class="cover-doc-pill">INSTRUMENTO DE RESPONSABILIDADE</div>
           </div>
         </button>
 
-        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-quitacao')">
+        <button class="cover-btn" id="btn-doc-quitacao" type="button" onclick="abrirDocumento('doc-quitacao')">
           <div class="cover-left">
-            <div class="cover-doc-pill cover-doc-quit">TERMO DE QUITAÇÃO (veículo de terceiros)</div>
+            <div class="cover-doc-pill">TERMO DE QUITAÇÃO (veículo de terceiros)</div>
           </div>
         </button>
 
-        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-residencia')">
+        <button class="cover-btn" id="btn-doc-residencia" type="button" onclick="abrirDocumento('doc-residencia')">
           <div class="cover-left">
-            <div class="cover-doc-pill cover-doc-res">DECLARAÇÃO DE RESIDÊNCIA</div>
+            <div class="cover-doc-pill">DECLARAÇÃO DE RESIDÊNCIA</div>
           </div>
         </button>
 
-        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-deposito')">
+        <button class="cover-btn" id="btn-doc-deposito" type="button" onclick="abrirDocumento('doc-deposito')">
           <div class="cover-left">
-            <div class="cover-doc-pill cover-doc-dep">DECLARAÇÃO DE DEPÓSITO PARA TERCEIROS</div>
+            <div class="cover-doc-pill">DECLARAÇÃO DE DEPÓSITO PARA TERCEIROS</div>
           </div>
         </button>
 
-        <button class="cover-btn" type="button" onclick="abrirDocumento('doc-orcamento')">
+        <button class="cover-btn" id="btn-doc-orcamento" type="button" onclick="abrirDocumento('doc-orcamento')">
           <div class="cover-left">
-            <div class="cover-doc-pill"
-              style="color: #f59e0b; background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3);">
-              ORÇAMENTO DE DETRAN</div>
+            <div class="cover-doc-pill">ORÇAMENTO DE DETRAN</div>
           </div>
         </button>
-
       </div>
     </div>
 
@@ -880,7 +1402,7 @@
     <!-- =========================
          DADOS GLOBAIS DO CLIENTE
          ========================= -->
-    <div class="cover" style="margin-top: 20px;">
+    <div class="cover hidden" id="dados-cliente-global" style="margin-top: 20px;">
       <div class="section-title"
         style="border-top: none; margin-top: 0; padding-top: 0; font-size: 16px; margin-bottom: 15px;">
         👤 DADOS DO CLIENTE (Preencha uma vez para todos os documentos)
@@ -990,7 +1512,7 @@
         </div>
 
         <div class="doc-actions">
-          <button class="btn btn-acordo" type="button" onclick="gerarProcuracaoAcordo()">📄 Gerar Procuração de
+          <button class="btn btn-acordo" type="button" onclick="gerarProcuracaoAcordo()"> Gerar Procuração de
             Acordo</button>
         </div>
       </div>
@@ -1056,7 +1578,7 @@
         </div>
 
         <div class="doc-actions">
-          <button class="btn btn-recebimento" type="button" onclick="gerarProcuracaoRecebimento()">🚙 Gerar Procuração
+          <button class="btn btn-recebimento" type="button" onclick="gerarProcuracaoRecebimento()"> Gerar Procuração
             de Recebimento do Usado</button>
         </div>
       </div>
@@ -1145,7 +1667,7 @@
           </div>
           <div class="form-item">
             <label for="quit_veiculoAdquiridoChassi">Chassi do veículo adquirido</label>
-            <input type="text" id="quit_veiculoAdquiridoChassi" placeholder="Chassi">
+            <input type="text" id="quit_veiculoAdquiridoChassi" placeholder="17 caracteres" maxlength="17">
           </div>
           <div class="form-item">
             <label for="quit_contratoNumero">Contrato nº</label>
@@ -1160,7 +1682,7 @@
         <p class="helper"><strong></strong></p>
 
         <div class="doc-actions">
-          <button class="btn btn-quitacao" type="button" onclick="gerarTermoQuitacaoTerceiro()">✅ Gerar Termo de
+          <button class="btn btn-quitacao" type="button" onclick="gerarTermoQuitacaoTerceiro()"> Gerar Termo de
             Quitação (Terceiro)</button>
         </div>
       </div>
@@ -1221,7 +1743,7 @@
           → 10/12/2025).</p>
 
         <div class="doc-actions">
-          <button class="btn btn-responsabilidade" type="button" onclick="gerarInstrumentoResponsabilidade()">🛡️ Gerar
+          <button class="btn btn-responsabilidade" type="button" onclick="gerarInstrumentoResponsabilidade()"> Gerar
             Instrumento de Responsabilidade</button>
         </div>
       </div>
@@ -1263,7 +1785,7 @@
         </div>
 
         <div class="doc-actions">
-          <button class="btn btn-residencia" type="button" onclick="gerarDeclaracaoResidencia()">🏠 Gerar Declaração de
+          <button class="btn btn-residencia" type="button" onclick="gerarDeclaracaoResidencia()"> Gerar Declaração de
             Residência</button>
         </div>
       </div>
@@ -1360,7 +1882,7 @@
         <p class="helper"> <strong></strong></p>
 
         <div class="doc-actions">
-          <button class="btn btn-deposito" type="button" onclick="gerarDeclaracaoDepositoTerceiros()">💳 Gerar
+          <button class="btn btn-deposito" type="button" onclick="gerarDeclaracaoDepositoTerceiros()"> Gerar
             Declaração de Depósito para Terceiros</button>
         </div>
       </div>
@@ -1537,8 +2059,104 @@
         </div>
 
         <div class="doc-actions no-print">
-          <button class="btn btn-acordo" type="button" onclick="window.print()">🖨️ Imprimir Orçamento</button>
+          <button class="btn btn-acordo" type="button" onclick="gerarOrcamentoDetran()"
+            style="background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #111827;"> Gerar PDF do
+            Orçamento</button>
         </div>
+      </div>
+
+      <!-- =========================
+           8) TEXTO CONTRATUAL
+           ========================= -->
+      <div class="doc-card hidden" id="doc-contrato">
+        <div class="head">
+          <div class="doc-title-pill doc-title-contrato">TEXTO CONTRATUAL</div>
+        </div>
+
+        <div class="section-title"
+          style="border-top: none; margin-top: 0; padding-top: 0; text-align: center; margin-bottom: 15px;">
+          Escolha a Modalidade de Venda</div>
+
+        <div class="tabs-contrato">
+          <button class="tab-contrato active" id="tab-tradicional" type="button"
+            onclick="selecionarModalidade('tradicional')">
+            Garantia em Dobro
+          </button>
+          <button class="tab-contrato" id="tab-outlet" type="button" onclick="selecionarModalidade('outlet')">
+            Outlet
+          </button>
+        </div>
+
+        <textarea class="texto-contratual" id="texto-contratual" readonly></textarea>
+
+        <div class="doc-actions">
+          <button class="btn btn-contrato" type="button" onclick="copiarTextoContratual()"> Copiar Texto</button>
+        </div>
+      </div>
+
+
+      <!-- =========================
+           9) CALCULADORA DE JUROS (Cartão)
+           ========================= -->
+      <div class="doc-card hidden" id="doc-calculadora">
+        <div class="head">
+          <div class="doc-title-pill doc-title-calc">CALCULADORA DE JUROS</div>
+        </div>
+
+
+
+        <!-- Campo de valor em cima -->
+        <div class="calc-input-grid">
+          <div class="form-item" style="gap:6px; margin:0;">
+            <label style="color: var(--muted); font-weight:900;">Digite o valor no campo ao lado</label>
+          </div>
+
+          <div class="calc-input-wrap">
+            <span class="calc-prefix">R$</span>
+            <input id="calc_baseValue" class="calc-input" type="text" inputmode="decimal"
+              placeholder="Ex.: 10.000,00" />
+          </div>
+
+          <button class="btn" id="calc_btnLimpar" type="button" style="min-width:unset; width:100%;">Limpar</button>
+        </div>
+
+        <!-- Botões de banco -->
+        <div class="calc-bank-row" aria-label="Seleção de operadora">
+          <button class="calc-bank-btn rede" id="calc_btnRede" type="button" title="Selecionar REDE">
+            <span class="calc-bank-dot"></span> REDE
+          </button>
+          <button class="calc-bank-btn banri" id="calc_btnBanri" type="button" title="Selecionar BANRICOMPRAS">
+            <span class="calc-bank-dot"></span> BANRICOMPRAS
+          </button>
+        </div>
+
+        <div id="calc_emptyState" class="calc-empty-state">
+          Selecione <strong>REDE</strong> ou <strong>BANRICOMPRAS</strong> para exibir as taxas e o cálculo.
+        </div>
+
+        <div id="calc_content" class="hidden">
+          <div class="calc-table-wrap" aria-label="Tabela (rolagem horizontal no mobile)">
+            <table class="calc-sheet" aria-label="Tabela de taxas e cálculo">
+              <thead>
+                <tr>
+                  <th style="width:34%;">Modalidade/Parcelas</th>
+                  <th class="center" style="width:14%;">Taxa</th>
+                  <th class="center" style="width:14%;">Fator</th>
+                  <th class="center" style="width:16%;">Valor a cobrar</th>
+                  <th class="center calc-highlight calc-sep" style="width:12%;">Quantidade de parcelas</th>
+                  <th class="center calc-highlight" style="width:14%;">Valor da parcela</th>
+                </tr>
+              </thead>
+              <tbody id="calc_tbody"></tbody>
+            </table>
+          </div>
+
+          <div class="calc-rotate-note">
+            No celular em <strong>modo retrato</strong>, deslize a tabela para o lado (rolagem horizontal). Se preferir,
+            gire a tela para <strong>horizontal</strong> para ver tudo de uma vez.
+          </div>
+        </div>
+
       </div>
 
     </div>
@@ -1579,13 +2197,116 @@
     /* =========================
        CAPA (abre 1 documento por vez)
        ========================= */
-    function abrirDocumento(docId) {
+    function alternarSecao(secao) {
+      // Esconder todas as seções e cards
+      document.getElementById('secao-gerador').classList.add('hidden');
+      document.getElementById('doc-calculadora').classList.add('hidden');
+      document.getElementById('doc-contrato').classList.add('hidden');
+      document.getElementById('dados-cliente-global').classList.add('hidden');
+
+      // Esconder todos os cards de documentos individuais
       const cards = document.querySelectorAll('.doc-card');
       cards.forEach(c => c.classList.add('hidden'));
+
+      // Remover classe active de todos os botões de navegação
+      document.getElementById('btn-gerador').classList.remove('active');
+      document.getElementById('btn-calculadora').classList.remove('active');
+      document.getElementById('btn-texto-legal').classList.remove('active');
+
+      if (secao === 'gerador') {
+        document.getElementById('secao-gerador').classList.remove('hidden');
+        document.getElementById('btn-gerador').classList.add('active');
+      } else if (secao === 'calculadora') {
+        document.getElementById('doc-calculadora').classList.remove('hidden');
+        document.getElementById('btn-calculadora').classList.add('active');
+      } else if (secao === 'texto-legal') {
+        document.getElementById('doc-contrato').classList.remove('hidden');
+        document.getElementById('btn-texto-legal').classList.add('active');
+        selecionarModalidade('tradicional');
+      }
+    }
+
+    function abrirDocumento(docId) {
+      // 1. Remove classe ACTIVE de todos os botões da capa
+      const coverBtns = document.querySelectorAll('.cover-btn');
+      coverBtns.forEach(btn => btn.classList.remove('active'));
+
+      // 2. Adiciona classe ACTIVE no botão correspondente
+      const btnIdMap = {
+        'doc-recebimento': 'btn-doc-recebimento',
+        'doc-acordo': 'btn-doc-acordo',
+        'doc-instrumento': 'btn-doc-instrumento',
+        'doc-quitacao': 'btn-doc-quitacao',
+        'doc-residencia': 'btn-doc-residencia',
+        'doc-deposito': 'btn-doc-deposito',
+        'doc-orcamento': 'btn-doc-orcamento'
+      };
+
+      if (btnIdMap[docId]) {
+        const btn = document.getElementById(btnIdMap[docId]);
+        if (btn) btn.classList.add('active');
+      }
+
+      // Esconder apenas os cards de documentos, mantendo o submenu visível se necessário
+      const cards = document.querySelectorAll('.doc-card');
+      cards.forEach(c => {
+        if (c.id !== 'doc-calculadora' && c.id !== 'doc-contrato') {
+          c.classList.add('hidden');
+        }
+      });
+
       const el = document.getElementById(docId);
       if (el) {
         el.classList.remove('hidden');
+        // Mostrar dados do cliente se for um documento do gerador
+        if (docId !== 'doc-calculadora' && docId !== 'doc-contrato') {
+          document.getElementById('dados-cliente-global').classList.remove('hidden');
+        }
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // Se abrir o card de contrato, inicializar com o texto tradicional
+      if (docId === 'doc-contrato') {
+        selecionarModalidade('tradicional');
+      }
+    }
+
+    /* =========================
+       TEXTO CONTRATUAL
+       ========================= */
+    const textoOutlet = `Declaro estar ciente de que o veículo adquirido se encontra enquadrado na Modalidade de Venda OUTLET, a qual se caracteriza por condições comerciais diferenciadas com o veículo podendo incluir características estéticas visíveis nas peças de lataria e pneus, desgaste natural compatível com o tempo de uso e demais particularidades previamente informadas e disponíveis para vistoria.
+
+Em razão da natureza desta modalidade de venda OUTLET, declaro estar ciente que a garantia aplicável ao veículo objeto deste contrato será restrita única e exclusivamente aos componentes de MOTOR e CAIXA DE CÂMBIO, pelo prazo legal de 90 (noventa) dias, conforme previsto no artigo 26, inciso II, do Código de Defesa do Consumidor.
+
+Declaro estar ciente que nenhuma outra garantia está inclusa, sendo excluída qualquer cobertura relativa a itens de desgaste natural, peças elétricas, eletrônicas, suspensão, freios, lataria, pintura, sistemas de entretenimento, acessórios, vibrações, avarias decorrentes de uso inadequado ou qualquer outro componente que não seja relacionado a motor e caixa de câmbio.
+
+Declaro que tive oportunidade de vistoriar o veículo antes da compra e que concordo com as condições descritas acima referente a modalidade de venda OUTLET.`;
+
+    const textoTradicional = `O Código de Defesa do Consumidor, em seu artigo 26, inciso II, estabelece que o consumidor tem direito a 90 dias de garantia na compra de um veículo seminovo. A San Marino, por meio da campanha GARANTIA EM DOBRO, oferece a você, nosso cliente, 90 dias adicionais, totalizando 180 dias de garantia para o veículo objeto deste contrato. Esta garantia estendida, do dia 91 até o dia 180, abrange única e exclusivamente defeitos no motor e na caixa de câmbio.`;
+
+    function selecionarModalidade(modalidade) {
+      const tabTradicional = document.getElementById('tab-tradicional');
+      const tabOutlet = document.getElementById('tab-outlet');
+      const textarea = document.getElementById('texto-contratual');
+
+      if (modalidade === 'tradicional') {
+        tabTradicional.classList.add('active');
+        tabOutlet.classList.remove('active');
+        textarea.value = textoTradicional;
+      } else {
+        tabOutlet.classList.add('active');
+        tabTradicional.classList.remove('active');
+        textarea.value = textoOutlet;
+      }
+    }
+
+    async function copiarTextoContratual() {
+      const textarea = document.getElementById('texto-contratual');
+      try {
+        await navigator.clipboard.writeText(textarea.value);
+        showToast('Texto copiado com sucesso!', 'success');
+      } catch (err) {
+        showToast('Erro ao copiar texto. Tente novamente.', 'error');
       }
     }
 
@@ -2557,6 +3278,71 @@
     }
 
     /* =========================
+       ORÇAMENTO DETRAN - Gerar PDF
+       ========================= */
+    async function gerarOrcamentoDetran() {
+      const orcCard = document.getElementById('printable-orcamento');
+
+      if (!orcCard) {
+        showToast('Erro ao localizar o orçamento.', 'error');
+        return;
+      }
+
+      try {
+        showToast('Gerando PDF do orçamento...', 'info');
+
+        // Importar html2canvas dinamicamente
+        if (typeof html2canvas === 'undefined') {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+          document.head.appendChild(script);
+          await new Promise(resolve => script.onload = resolve);
+        }
+
+        // Capturar o elemento como imagem
+        const canvas = await html2canvas(orcCard, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#ffffff'
+        });
+
+        // Criar PDF
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+
+        const imgData = canvas.toDataURL('image/png');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+
+        // Calcular dimensões mantendo proporção
+        const imgWidth = canvas.width;
+        const imgHeight = canvas.height;
+        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+
+        const imgScaledWidth = imgWidth * ratio;
+        const imgScaledHeight = imgHeight * ratio;
+
+        // Centralizar na página
+        const x = (pdfWidth - imgScaledWidth) / 2;
+        const y = (pdfHeight - imgScaledHeight) / 2;
+
+        pdf.addImage(imgData, 'PNG', x, y, imgScaledWidth, imgScaledHeight);
+
+        // Obter dados para o nome do arquivo
+        const proprietario = document.getElementById('orc_proprietario')?.value || 'CLIENTE';
+        const placa = document.getElementById('orc_placa')?.value || '';
+
+        pdf.save(buildFilename('ORCAMENTO_DETRAN', placa, proprietario));
+        showToast('PDF do Orçamento Detran gerado com sucesso!', 'success');
+
+      } catch (error) {
+        console.error('Erro ao gerar PDF:', error);
+        showToast('Erro ao gerar PDF. Tente novamente.', 'error');
+      }
+    }
+
+    /* =========================
        Inicialização
        ========================= */
     window.addEventListener('DOMContentLoaded', () => {
@@ -2667,7 +3453,149 @@
 
       const totalEl = document.getElementById('orc-total');
       if (totalEl) totalEl.innerText = formatBRL(total);
-    }</script>
+    }
+
+    /* =========================
+       CALCULADORA DE JUROS (Cartão) - Inicialização
+       ========================= */
+    document.addEventListener('DOMContentLoaded', () => {
+      const calcBtnBanri = document.getElementById("calc_btnBanri");
+      const calcBtnRede = document.getElementById("calc_btnRede");
+      const calcEmptyState = document.getElementById("calc_emptyState");
+      const calcContent = document.getElementById("calc_content");
+      const calcTbody = document.getElementById("calc_tbody");
+      const calcBaseInput = document.getElementById("calc_baseValue");
+      const calcBtnLimpar = document.getElementById("calc_btnLimpar");
+
+      // Se o card não existir (caso alguém remova), sai sem erro
+      if (!calcBtnBanri || !calcBtnRede || !calcEmptyState || !calcContent || !calcTbody || !calcBaseInput || !calcBtnLimpar) return;
+
+      // Dados (iguais aos da planilha)
+      const CALC_BANRI = [
+        { label: "Débito", n: 1, taxa: 1.50, fator: 0.985 },
+        { label: "1x / 30 dias", n: 1, taxa: 5.80, fator: 0.942 },
+        { label: "2x", n: 2, taxa: 7.30, fator: 0.927 },
+        { label: "3x", n: 3, taxa: 8.80, fator: 0.912 },
+        { label: "4x", n: 4, taxa: 10.30, fator: 0.897 },
+      ];
+
+      const CALC_REDE = [
+        { label: "1x", n: 1, taxa: 1.55, fator: 0.985 },
+        { label: "2x", n: 2, taxa: 3.05, fator: 0.970 },
+        { label: "3x", n: 3, taxa: 4.50, fator: 0.954 },
+        { label: "4x", n: 4, taxa: 5.38, fator: 0.946 },
+        { label: "5x", n: 5, taxa: 6.15, fator: 0.939 },
+        { label: "6x", n: 6, taxa: 6.93, fator: 0.931 },
+        { label: "7x", n: 7, taxa: 7.90, fator: 0.921 },
+        { label: "8x", n: 8, taxa: 8.68, fator: 0.913 },
+        { label: "9x", n: 9, taxa: 9.45, fator: 0.906 },
+        { label: "10x", n: 10, taxa: 10.23, fator: 0.898 },
+      ];
+
+      // Helpers
+      const calc_brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+      const calc_pct = (v) => (v / 100).toLocaleString("pt-BR", { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const calc_fator3 = (v) => v.toLocaleString("pt-BR", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+
+      function calc_parseBRL(str) {
+        if (!str) return 0;
+        const s = String(str).trim()
+          .replace(/\s/g, "")
+          .replace(/\./g, "")
+          .replace(",", ".")
+          .replace(/[^\d.]/g, "");
+        const val = Number(s);
+        return Number.isFinite(val) ? val : 0;
+      }
+
+      function calc_formatBRLInput(el) {
+        const v = calc_parseBRL(el.value);
+        if (!v) {
+          el.value = "";
+          return 0;
+        }
+        el.value = v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return v;
+      }
+
+      function calc_valorCobrar(base, fator) {
+        if (!base || !fator) return 0;
+        return base / fator;
+      }
+
+      function calc_parcela(total, n) {
+        if (!total || !n) return 0;
+        return total / n;
+      }
+
+      let calcModo = null; // "BANRI" ou "REDE"
+
+      function calc_currentData() {
+        return calcModo === "BANRI" ? CALC_BANRI : (calcModo === "REDE" ? CALC_REDE : []);
+      }
+
+      function calc_render() {
+        const base = calc_parseBRL(calcBaseInput.value);
+        const data = calc_currentData();
+
+        if (!calcModo) {
+          calcTbody.innerHTML = "";
+          return;
+        }
+
+        calcTbody.innerHTML = data.map(row => {
+          const total = base ? calc_valorCobrar(base, row.fator) : 0;
+          const parc = base ? calc_parcela(total, row.n) : 0;
+
+          const totalTxt = base ? calc_brl.format(total) : "—";
+          const parcTxt = base ? calc_brl.format(parc) : "—";
+
+          return `
+            <tr>
+              <td>${row.label}</td>
+              <td class="center calc-muted">${calc_pct(row.taxa)}</td>
+              <td class="center calc-muted">${calc_fator3(row.fator)}</td>
+              <td class="center"><span class="calc-money">${totalTxt}</span></td>
+              <td class="center calc-highlight calc-sep">${row.n}x</td>
+              <td class="center calc-highlight"><span class="calc-money">${parcTxt}</span></td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      function calc_setModo(next) {
+        calcModo = next;
+
+        calcBtnBanri.classList.toggle("active", calcModo === "BANRI");
+        calcBtnRede.classList.toggle("active", calcModo === "REDE");
+
+        calcEmptyState.classList.toggle("hidden", !!calcModo);
+        calcContent.classList.toggle("hidden", !calcModo);
+
+        calc_render();
+      }
+
+      // Eventos
+      calcBtnBanri.addEventListener("click", () => calc_setModo("BANRI"));
+      calcBtnRede.addEventListener("click", () => calc_setModo("REDE"));
+
+      calcBaseInput.addEventListener("input", () => calc_render());
+      calcBaseInput.addEventListener("blur", () => { calc_formatBRLInput(calcBaseInput); calc_render(); });
+
+      calcBtnLimpar.addEventListener("click", () => {
+        calcBaseInput.value = "";
+        calc_render();
+        calcBaseInput.focus();
+      });
+
+      // Inicial: sem escolha
+      calc_setModo(null);
+
+      // Inicializar na seção do Gerador de Documentos
+      alternarSecao('gerador');
+    });
+
+  </script>
 </body>
 
 </html>
